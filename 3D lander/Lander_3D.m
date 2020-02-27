@@ -1,4 +1,4 @@
-function [N,Cb,Cs,nnodes,n_s,n_b] = Lander_3D(q,p)
+function [N,Cb,Cs,nnodes,n_s,n_b] = Lander_3D(q,p,r)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -16,7 +16,6 @@ cyl = 'SP';
 % 'SP': sphere
 
 % RCC 
-r = 0.5;
 % REC
 ar = 0.9;
 br = 0.5;

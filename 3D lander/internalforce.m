@@ -1,4 +1,4 @@
-function [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium)
+function [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss, sigma_si, sigma_ss_diff, sigma_si_diff, sigma_b_c_diff, sigma_b_t_diff] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -25,14 +25,32 @@ function [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initia
     for i = 1:n_s
         sigma_s = [sigma_s; E_s*varepsilon_s(i) + c_s*d_varepsilon_s(i) ];
     end
+    % Separate sigma into surface and internal stresses
+    sigma_ss = sigma_s(1:(n_s/2),:);
+    sigma_si = sigma_s((n_s/2 + 1):n_s,:);    
+    
    
     % f_s matrix ( D*n_s * 1 )
-    
+    %f_s = [external ; internal]
     f_s = [];
-    for i = 1:D*n_s
+    for i = 1:D*n_s/2
         j = ceil(i/D);
-        f_s = [ f_s ; sigma_s(j) * A_s * s(i) / s_nowlength(j) ];
+        f_s = [ f_s ; sigma_s(j) * A_s(1) * s(i) / s_nowlength(j) ];
     end
+    for i = (D*n_s/2 + 1):D*n_s
+        j = ceil(i/D);
+        f_s = [ f_s ; sigma_s(j) * A_s(2) * s(i) / s_nowlength(j) ];
+    end
+    
+    %  ------------------------ String Stress --------------------------------
+   %Calculate the difference between string stress and yield stress
+   sigma_s_diff = sigma_s - Yield_Nylon;
+   sigma_s_check = sigma_s_diff > 0;
+   %Get rid of all values of simga_s that are in range
+   sigma_s_diff = sigma_s_diff.*sigma_s_check;
+   sigma_ss_diff = sigma_s_diff(1:(n_s/2),:);
+   sigma_si_diff = sigma_s_diff((n_s/2 + 1):n_s,:); 
+    
     %  ------------------------ Bars force --------------------------------
    % Finding initial length matrix and current length matrix (both are n_b*1 matrix)
     b_initiallength = [];
@@ -64,6 +82,28 @@ function [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initia
         j = ceil(i/D);
         f_b = [ f_b ; sigma_b(j) * A_b * b(i) / b_nowlength(j) ];
     end
+    
+    %  ------------------------ Bars Stress --------------------------------
+   %Compressive stresses to buckling
+   r_bars = sqrt(A_b/pi);
+   sigma_b_max_c = ((pi^2)*Youngs_Titanium*(r_bars^2))./((b_nowlength).^2);
+   compressive_sigma_b = sigma_b > 0; %Get rid of all tensile values
+   sigma_b_compressive = sigma_b;
+   sigma_b_compressive(compressive_sigma_b) = 0;
+   sigma_b_max_c(compressive_sigma_b) = 0;
+   %Positive sigma_b_comp_diff means failure
+   sigma_b_c_diff = abs(sigma_b_compressive) - sigma_b_max_c;
+   sigma_b_c_check = sigma_b_c_diff > 0;
+   sigma_b_c_diff = sigma_b_c_diff .* sigma_b_c_check;
+   
+    %Tensile stresses for yield
+   tensile_sigma_b = sigma_b > 0; % Get rid of compressive values
+   tensile_sigma_b = sigma_b.*tensile_sigma_b;
+   sigma_b_t_diff = tensile_sigma_b - Yield_Titanium;
+   sigma_b_t_check = sigma_b_t_diff > 0;
+   sigma_b_t_diff = sigma_b_t_diff.*sigma_b_t_check;
+ 
+   
     %--------------------------  f_I --------------------------------------
     f_I = kron(C_sT,I_D)*f_s + kron(C_bT,I_D)*f_b ;
 end

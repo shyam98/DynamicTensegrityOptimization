@@ -1,4 +1,4 @@
-function [] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p_range, q_range, number_of_orientation)
+function [mass, Max_g_of_different_orientation, sigma_ss_max_n, sigma_ss_min_n, sigma_si_max_n, sigma_si_min_n, sigma_bar_max_n, sigma_bar_min_n, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p_range, q_range, number_of_orientation)
 
 tic
 %% Input parameters
@@ -69,7 +69,7 @@ number_of_loop = total_time/dt;
 V_tol = 0.05;
 Time_stop = 2/dt;
 acceleration_tol = 5000*9.8;
-number_of_orientation = 1; % The number of orientations for each configurations
+%number_of_orientation = 1; % The number of orientations for each configurations
 % ======================== Materials properties ===========================
 % --------------------- bars -----------------------
 rho_b = 5000;   
@@ -105,10 +105,10 @@ Zmax = []; Zmin = [];
 %   ============================================================================================
 % Loops for m_s (1/32*m_load,1/16*m_load,1/8*m_load,1/4*m_load,...)
 for m_s_total = [1/16*m_load] 
-    for p = 5:5 % p = 3, 4 ,5
-        for q = 5:5 % q = 4 ,5
+    for p = p_range % p = 3, 4 ,5
+        for q = q_range % q = 4 ,5
             %% ==================== node matrix and C_s, C_b ======================
-            [N_norotation,C_b,C_s,nnodes,n_s,n_b] = Lander_3D(q,p);
+            [N_norotation,C_b,C_s,nnodes,n_s,n_b] = Lander_3D(q,p,r);
             C_sT = C_s'; C_bT = C_b';
             %%  Loops for m_b (1/32*m_load,1/16*m_load,1/8*m_load,1/4*m_load,...)
                 for m_b_total = [1/2*m_load]
@@ -134,7 +134,7 @@ for m_s_total = [1/16*m_load]
                         db_0 = db;
                         %% Mass (Only calculate once)
                         if aa == 1
-                            [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_s_total,m_b_total,m_load, A_s, A_b);
+                            [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_load, A_s, A_b);
                             invM = inv(M);
                         end
                         %%  Finding f_g (Only calculate once)
@@ -175,6 +175,20 @@ for m_s_total = [1/16*m_load]
                             currenttime = [];
                             loop_after_V_tol = 0;
                             acceleration_excess = 0; 
+                            sigma_ss_max = [];
+                            sigma_ss_min = [];
+
+                            sigma_si_max = [];
+                            sigma_si_min = [];
+
+                            sigma_bar_max = [];
+                            sigma_bar_min = [];
+
+                            sigma_ss_diff = [];
+                            sigma_si_diff = [];
+                            sigma_b_c_diff = [];
+                            sigma_b_t_diff = [];
+
                             %% ====== Start simulation for each orientation =========
                             for loop = 1:number_of_loop
                                 %% Finding trajectory matrices of arbitrary nodes
@@ -203,7 +217,23 @@ for m_s_total = [1/16*m_load]
                                 %% External force
                                 f_e = externalforce(D,nnodes,n,pc,dn,eta,f_g,Cc);
                                 %% Internal force                              
-                                [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b,c_s,c_b,A_s,A_b);
+                                [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium);
+                                %% Keep track of stresses
+                                sigma_ss_max = [sigma_ss_max; max(sigma_ss_dt)];
+                                sigma_ss_min = [sigma_ss_min; min(sigma_ss_dt)];
+
+                                sigma_si_max = [sigma_si_max; max(sigma_si_dt)];
+                                sigma_si_min = [sigma_si_min; min(sigma_si_dt)];
+
+
+                                sigma_bar_max = [sigma_bar_max; max(sigma_b)];
+                                sigma_bar_min = [sigma_bar_min; min(sigma_b)];
+
+
+                                sigma_ss_diff = [sigma_ss_diff; sigma_ss_diff_dt];
+                                sigma_si_diff = [sigma_si_diff; sigma_si_diff_dt];
+                                sigma_b_c_diff = [sigma_b_c_diff; sigma_b_c_diff_dt];
+                                sigma_b_t_diff = [sigma_b_t_diff; sigma_b_t_diff_dt];
                                 %% Finding acceleration ddn
                                 ddn = invM*(f_e - f_I);
                                 center_node_g = [center_node_g, sqrt(ddn(end-3)^2 + ddn(end-1)^2 + ddn(end)^2) ];
@@ -327,6 +357,22 @@ for m_s_total = [1/16*m_load]
                         if acceleration_excess == 1
                             break
                         end
+                            %% Max and Min Stresses
+                        sigma_ss_max_n = [sigma_ss_max_n; max(sigma_ss_max)];
+                        sigma_ss_min_n = [sigma_ss_min_n; min(sigma_ss_min)];
+
+                        sigma_si_max_n = [sigma_si_max_n; max(sigma_si_max)];
+                        sigma_si_min_n = [sigma_si_min_n; min(sigma_si_min)];
+
+                        sigma_bar_max_n = [sigma_bar_max_n; max(sigma_bar_max)];
+                        sigma_bar_min_n = [sigma_bar_min_n; min(sigma_bar_min)];
+
+                        sigma_si_diff_n = [sigma_si_diff_n; max(sigma_si_diff)];
+                        sigma_ss_diff_n = [sigma_ss_diff_n; max(sigma_ss_diff)];
+                        sigma_b_c_diff_n = [sigma_b_c_diff_n; max(sigma_b_c_diff)];
+                        sigma_b_t_diff_n = [sigma_b_t_diff_n; max(sigma_b_t_diff)];
+
+
                     end 
                     % =========================================================================================================
                     % The ending of one configuration
@@ -339,6 +385,8 @@ end
 %   End dynamic simulation 
 %   ============================================================================================
 %axis([min(Xmin) max(Xmax) min(Ymin) max(Ymax) min(Zmin) max(Zmax)])
+%% Total Mass
+mass = sum(m,'all');      
 
 figure()
 plot(currenttime,center_node_g/9.8)
