@@ -21,14 +21,6 @@ v_0 = -5;
 m_load = 500;
 dtheta_max = 1*pi/180;
 
-stress_ss_max = [];
-stress_ss_min = [];
-stress_si_max = [];
-stress_si_min = [];
-stress_b_max = [];
-stress_b_min = [];
-
-
 sigma_ss_max_n = [];
 sigma_ss_min_n = [];
 
