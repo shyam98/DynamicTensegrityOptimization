@@ -141,6 +141,9 @@ for q = q_range
     end
     C_sT = C_s'; C_bT = C_b';
     % loops: The number of orientations for each configuration
+    
+    % Keep Track of figures for each orientation
+    max_g_n = [];
     for aa = 1:number_of_orientation
         %% Node position matrix n
         [n,N] = nodematrix(N_norotation,height,nnodes);
@@ -339,6 +342,7 @@ for q = q_range
         %% Record the max_g, depth, deviation distance and falling time of each orientation
         % If the acceleration excesses the maximum allowed value, 
         % we assume its deviation distance and stopping time are -1.
+       max_g_n = mean(Max_g_of_different_orientation);
        if acceleration_excess == 1
             Max_g_of_different_orientation = [Max_g_of_different_orientation; max(center_node_g)/9.8];
             deviation_distance = [deviation_distance; -1];
@@ -364,9 +368,10 @@ for q = q_range
         sigma_ss_diff_n = [sigma_ss_diff_n; max(sigma_ss_diff)];
         sigma_b_c_diff_n = [sigma_b_c_diff_n; max(sigma_b_c_diff)];
         sigma_b_t_diff_n = [sigma_b_t_diff_n; max(sigma_b_t_diff)];
-
-
+    %% Plot outputs to find averages
+        plot(1:aa,mean(Max_g_of_different_orientation))
     end
+
     % =========================================================================================================
     % The ending of one configuration
     % =========================================================================================================
