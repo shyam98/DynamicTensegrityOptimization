@@ -65,7 +65,7 @@ g_mars = -3.711;
 % is not safe.
 % Final_distance
 dt = 4*10^(-4);
-total_time = 25;
+total_time = 10;
 number_of_loop = total_time/dt;
 V_tol = 0.05;
 Time_stop = 2/dt;
@@ -369,7 +369,8 @@ for q = q_range
         sigma_b_c_diff_n = [sigma_b_c_diff_n; max(sigma_b_c_diff)];
         sigma_b_t_diff_n = [sigma_b_t_diff_n; max(sigma_b_t_diff)];
     %% Plot outputs to find averages
-        plot(1:aa,mean(Max_g_of_different_orientation))
+        mean_g(aa) = mean(Max_g_of_different_orientation)
+        std_g(aa) = std(Max_g_of_different_orientation)
     end
 
     % =========================================================================================================
