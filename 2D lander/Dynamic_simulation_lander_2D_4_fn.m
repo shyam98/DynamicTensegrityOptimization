@@ -370,9 +370,10 @@ for q = q_range
         sigma_b_t_diff_n = [sigma_b_t_diff_n; max(sigma_b_t_diff)];
     %% Plot outputs to find averages
         mean_g(aa) = mean(Max_g_of_different_orientation)
-        if aa>5
-            std_g = std(Max_g_of_different_orientation(:,end-5:end))
-            if std_g < 100
+        
+        if aa>10
+            std_g = std(mean_g(:,end-5:end))
+            if std_g < 0.1
                 break;
             end
         end

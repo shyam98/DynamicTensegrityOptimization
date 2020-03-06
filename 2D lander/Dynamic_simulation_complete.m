@@ -37,6 +37,6 @@ if isempty(number_of_orientation)
 end
 
 [mass, Max_g_of_different_orientation, sigma_ss_max_n, sigma_ss_min_n, sigma_si_max_n, sigma_si_min_n, sigma_bar_max_n, sigma_bar_min_n, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n] = Dynamic_simulation_lander_2D_4_fn(r, r_ss, r_si, r_b, p, q, number_of_orientation);
-n_table = [1:number_of_orientation]';
+n_table = [1:size(Max_g_of_different_orientation,1)]';
 VarNames = {'Run', 'Max G', 'Max B Stress', 'Min B Stress', 'Max Si Stress', 'Min Si Stress', 'Max Ss Stress', 'Min Ss Stress', 'B Fail Comp', 'B Fail Tens', 'Ss Fail Tens', 'Si Fail Tens'};
 T = table( n_table , Max_g_of_different_orientation, sigma_bar_max_n, sigma_bar_min_n, sigma_si_max_n, sigma_si_min_n, sigma_ss_max_n, sigma_ss_min_n, sigma_b_c_diff_n, sigma_b_t_diff_n, sigma_ss_diff_n, sigma_si_diff_n, 'VariableNames', VarNames)
