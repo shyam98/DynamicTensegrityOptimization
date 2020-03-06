@@ -370,12 +370,12 @@ for q = q_range
         sigma_b_t_diff_n = [sigma_b_t_diff_n; max(sigma_b_t_diff)];
     %% Plot outputs to find averages
         mean_g(aa) = mean(Max_g_of_different_orientation)
-        mean_sig_ss_max(aa) = mean(sigma_ss_max_n);
-        mean_sig_si_max(aa) = mean(sigma_si_max_n);
-        mean_sig_ss_min(aa) = mean(sigma_ss_min_n);
-        mean_sig_si_min(aa) = mean(sigma_si_min_n);
-        mean_sig_b_max(aa) = mean(sigma_bar_max_n);
-        mean_sig_b_min(aa) = mean(sigma_bar_min_n);
+        mean_sig_ss_max(aa) = mean(sigma_ss_max_n)/1e8;
+        mean_sig_si_max(aa) = mean(sigma_si_max_n)/1e8;
+        mean_sig_ss_min(aa) = mean(sigma_ss_min_n)/1e8;
+        mean_sig_si_min(aa) = mean(sigma_si_min_n)/1e8;
+        mean_sig_b_max(aa) = mean(sigma_bar_max_n)/1e8;
+        mean_sig_b_min(aa) = mean(sigma_bar_min_n)/1e8;
         
         if aa>10
             std_mean_g = std(mean_g(:,end-5:end));
@@ -388,7 +388,8 @@ for q = q_range
         end
         
         
-        if aa>10 && std_mean_g<0.1 && std_mean_sig_ss_max<0.1 && std_mean_sig_si_max<0.1 && std_mean_sig_ss_min<0.1 && std_mean_sig_si_min<0.1 && std_mean_sig_b_max<0.1 && std_mean_sig_b_min<0.1
+        if aa>10 && std_mean_g<0.2 && std_mean_sig_ss_max<0.2 && std_mean_sig_si_max<0.2 && std_mean_sig_ss_min<0.2 && std_mean_sig_si_min<0.2 && std_mean_sig_b_max<0.2 && std_mean_sig_b_min<0.2
+            plot(1:aa, mean_g)
             break;
         end
         
