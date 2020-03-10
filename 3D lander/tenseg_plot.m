@@ -33,7 +33,7 @@ NodeSize = 8; % Size of node marker
 % Write labels? (1: show, 0: suppress)
 LabelNodes = 0;
 LabelStrings = 0;
-LabelBars = 0;
+LabelBars = 1;
 
 FontBars = 15; % Font of bar labels
 FontStrings = 10; % Font of string labels
@@ -44,9 +44,9 @@ FractionDistance = 0.005; % Distance between object and label (relative to overa
 %% 3D plot options
 nsurfpatches = 6; % Number of surface patches in 3D plots
 BarSurfColor = [0.2, 0.2, 0.6];
-StringSurfColor = [0, 0, 0];
-%StringSurfColor = [1, 0.0, 0.0];
-LightAmbientStrength = 0.7;% [0,1], 0.3 is Matlab's default
+StringSurfColor = [0, 1, 0];
+%StringSurfColor = [0, 0.0, 0.0];
+LightAmbientStrength = 0.9;% [0,1], 0.3 is Matlab's default
 
 %%
 switch nargin

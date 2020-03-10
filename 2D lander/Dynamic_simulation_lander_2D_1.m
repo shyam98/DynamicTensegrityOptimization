@@ -292,6 +292,7 @@ for aa = 1:number_of_Orientation
         for j = 1:n_b
             U_e = U_e + 1/2 * varepsilon_b(j) * sigma_b(j) * A_b * b_initiallength(j);
         end
+        
         U_po = [U_po, U_g + U_e];
         % ------------------------ Kinetic energy ---------------------------
         E_kj = 0;

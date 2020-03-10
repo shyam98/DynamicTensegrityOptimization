@@ -18,29 +18,6 @@ v_0 = -5;
 A_s = [A_ss ; A_si];
 dtheta_0 = 1*pi/180;
 
-stress_ss_max = [];
-stress_ss_min = [];
-stress_si_max = [];
-stress_si_min = [];
-stress_b_max = [];
-stress_b_min = [];
-
-
-sigma_ss_max_n = [];
-sigma_ss_min_n = [];
-
-sigma_si_max_n = [];
-sigma_si_min_n = [];
-
-sigma_bar_max_n = [];
-sigma_bar_min_n = [];
-
-sigma_si_diff_n = [];
-sigma_ss_diff_n = [];
-sigma_b_c_diff_n = [];
-sigma_b_t_diff_n = [];
-
-
 Yield_Nylon = 9.4e7;
 Yield_Titanium = 1e9;
 Youngs_Titanium = 115e9;
@@ -92,10 +69,10 @@ display_node_x_position = zeros(length(display_node),number_of_loop);
 display_node_y_position = zeros(length(display_node),number_of_loop);
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
-Max_g_of_different_orientation = []; % Store Maximum acceleration of all orientations
-deviation_distance = [];             % Store deviation distance of all orientations
-Falling_time = [];                   % Store stop time of all orientations
-deepest_y = [];                      % Store the deepest penetration of all orientations
+Max_g_of_different_orientation = zeros(number_of_orientation, 1); % Store Maximum acceleration of all orientations
+deviation_distance = zeros(number_of_orientation, 1);             % Store deviation distance of all orientations
+Falling_time = zeros(number_of_orientation, 1);                   % Store stop time of all orientations
+deepest_y = zeros(number_of_orientation, 1);                      % Store the deepest penetration of all orientations
 %%  ============================================================================================
 %   Start dynamic simulation 
 %   ============================================================================================
@@ -143,7 +120,25 @@ for q = q_range
     % loops: The number of orientations for each configuration
     
     % Keep Track of figures for each orientation
-    max_g_n = [];
+    mean_g = zeros(1,number_of_orientation);
+    mean_sig_ss_max = zeros(1,number_of_orientation);
+    mean_sig_si_max = zeros(1,number_of_orientation);
+    mean_sig_ss_min = zeros(1,number_of_orientation);
+    mean_sig_si_min = zeros(1,number_of_orientation);
+    mean_sig_b_max = zeros(1,number_of_orientation);
+    mean_sig_b_min = zeros(1,number_of_orientation);
+    
+    sigma_ss_max_n = zeros(number_of_orientation,1);
+    sigma_ss_min_n = zeros(number_of_orientation,1);
+    sigma_si_max_n = zeros(number_of_orientation,1);
+    sigma_si_min_n = zeros(number_of_orientation,1);
+    sigma_bar_max_n = zeros(number_of_orientation,1);
+    sigma_bar_min_n = zeros(number_of_orientation,1);
+    sigma_si_diff_n = zeros(number_of_orientation,1);
+    sigma_ss_diff_n = zeros(number_of_orientation,1);
+    sigma_b_c_diff_n = zeros(number_of_orientation,1);
+    sigma_b_t_diff_n = zeros(number_of_orientation,1);
+    
     for aa = 1:number_of_orientation
         %% Node position matrix n
         [n,N] = nodematrix(N_norotation,height,nnodes);
@@ -172,28 +167,29 @@ for q = q_range
             f_g = M*g;
         end
         %% Initializing Energy matices and velocity scaler
-        U = [];   % Total Energy
-        E_k = [];  % Kinetic Energy
-        U_po = [];  % Potential Energy 
-        V_scaler = []; % Vector used to store the average speed of all nodes per simulation loops, and used to plot speed vs. time plot.
-        center_node_g = []; % Store the acceleration of central nodes
-        currenttime = []; % Vector used to store current simulation time.
+        U = zeros(1,number_of_loop);   % Total Energy
+        E_k = zeros(1,number_of_loop);  % Kinetic Energy
+        U_po = zeros(1,number_of_loop);  % Potential Energy 
+        V_scaler = zeros(1,number_of_loop); % Vector used to store the average speed of all nodes per simulation loops, and used to plot speed vs. time plot.
+        center_node_g = zeros(1,number_of_loop); % Store the acceleration of central nodes
+        currenttime = zeros(1,number_of_loop); % Vector used to store current simulation time.
         loop_after_V_tol = 0; % Used to record the number of loops when the speed is below 'V_tol'. If 'loop_after_V_tol' >= 'Time_stop', the lander stops.
         acceleration_excess = 0; %  acceleration_excess = 1 represents that the acceleration excesses the maximum allowed value, acceleration_excess = 0 represents that the acceleration is below the maximum allowed value
         deepest_y_of_each_orientation = 0;
-        sigma_ss_max = [];
-        sigma_ss_min = [];
         
-        sigma_si_max = [];
-        sigma_si_min = [];
+        sigma_ss_max = zeros(number_of_loop,1);
+        sigma_ss_min = zeros(number_of_loop,1);
         
-        sigma_bar_max = [];
-        sigma_bar_min = [];
+        sigma_si_max = zeros(number_of_loop,1);
+        sigma_si_min = zeros(number_of_loop,1);
         
-        sigma_ss_diff = [];
-        sigma_si_diff = [];
-        sigma_b_c_diff = [];
-        sigma_b_t_diff = [];
+        sigma_bar_max = zeros(number_of_loop,1);
+        sigma_bar_min = zeros(number_of_loop,1);
+        
+        sigma_ss_diff = zeros(number_of_loop,1);
+        sigma_si_diff = zeros(number_of_loop,1);
+        sigma_b_c_diff = zeros(number_of_loop,1);
+        sigma_b_t_diff = zeros(number_of_loop,1);
         
         %% ================================================
         %       Start simulation for each configuration
@@ -229,26 +225,25 @@ for q = q_range
             %% Internal force                              
             [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce_2(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b,c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium);
             %% Keep track of max and min stresses
-            sigma_ss_max = [sigma_ss_max; max(sigma_ss_dt)];
-            sigma_ss_min = [sigma_ss_min; min(sigma_ss_dt)];
+            sigma_ss_max(loop) = max(sigma_ss_dt);
+            sigma_ss_min(loop) = min(sigma_ss_dt);
             
-            sigma_si_max = [sigma_si_max; max(sigma_si_dt)];
-            sigma_si_min = [sigma_si_min; min(sigma_si_dt)];
+            sigma_si_max(loop) = max(sigma_si_dt);
+            sigma_si_min(loop) = min(sigma_si_dt);
 
             
-            sigma_bar_max = [sigma_bar_max; max(sigma_b)];
-            sigma_bar_min = [sigma_bar_min; min(sigma_b)];
+            sigma_bar_max(loop) = max(sigma_b);
+            sigma_bar_min(loop) = min(sigma_b);
             
-            
-            sigma_ss_diff = [sigma_ss_diff; sigma_ss_diff_dt];
-            sigma_si_diff = [sigma_si_diff; sigma_si_diff_dt];
-            sigma_b_c_diff = [sigma_b_c_diff; sigma_b_c_diff_dt];
-            sigma_b_t_diff = [sigma_b_t_diff; sigma_b_t_diff_dt];
+            sigma_ss_diff(loop) = max(abs(sigma_ss_diff_dt));
+            sigma_si_diff(loop) = max(abs(sigma_si_diff_dt));
+            sigma_b_c_diff(loop) = max(abs(sigma_b_c_diff_dt));
+            sigma_b_t_diff(loop) = max(abs(sigma_b_t_diff_dt));
             
             %% Finding acceleration ddn
-            ddn = invM*(f_e - f_I);
+            ddn = M\(f_e - f_I);
             %% Check the acceleration of the central node
-            center_node_g = [center_node_g, sqrt(ddn(1+D*(nnodes-1))^2 + ddn(2+D*(nnodes-1))^2) ];
+            center_node_g(loop) = sqrt(ddn(1+D*(nnodes-1))^2 + ddn(2+D*(nnodes-1))^2);
             %  acceleration_excess = 1 represents that the acceleration excesses the maximum allowed
             %  value.
             if sqrt(ddn(1+D*(nnodes-1))^2 + ddn(2+D*(nnodes-1))^2) >= abs(acceleration_tol)
@@ -286,23 +281,26 @@ for q = q_range
             end
             % Elastic potential energy
             U_e = 0;
-            for j = 1:n_s
-                U_e = U_e + 1/2 * varepsilon_s(j) * sigma_s(j) * A_s * s_initiallength(j);
+            for j = 1:n_s/2
+                U_e = U_e + 1/2 * varepsilon_s(j) * sigma_s(j) * A_s(1) * s_initiallength(j);
+            end
+            for j = n_s/2+1:n_s
+                U_e = U_e + 1/2 * varepsilon_s(j) * sigma_s(j) * A_s(2) * s_initiallength(j);
             end
             for j = 1:n_b
                 U_e = U_e + 1/2 * varepsilon_b(j) * sigma_b(j) * A_b * b_initiallength(j);
             end
-            U_po = [U_po, U_g + U_e];
+            U_po(loop) = U_g + U_e;
             % ------------------------ Kinetic energy ---------------------------
             E_kj = 0;
             for j = 1:nnodes
                E_kj = E_kj + 1/2 * m(j) * ( dn(1+D*(j-1))^2 + dn(2+D*(j-1))^2 );
             end
-            E_k = [E_k , E_kj ];
+            E_k(loop) = E_kj;
             % ------------------------ Total Energy ---------------------------
-            U = [U , E_kj + U_g + U_e];
+            U(loop) = E_kj + U_g + U_e;
             %% currenttime
-            currenttime = [currenttime , dt*loop ];
+            currenttime(loop) = dt*loop;
             %% Finding deepest y position ( or finding the peneration of the lander)
             if min(N(2,:)) < deepest_y_of_each_orientation
                 deepest_y_of_each_orientation = min(N(2,:));
@@ -314,7 +312,7 @@ for q = q_range
                 V_each_step = V_each_step + sqrt(( dn(1+D*(j-1))^2 + dn(2+D*(j-1))^2 ));
             end
             V_each_step = V_each_step/nnodes;
-            V_scaler = [V_scaler, V_each_step];
+            V_scaler(loop) = V_each_step;
             % If V_scaler < V_tol for the number of 'lopp_after_V_tol' loops, we assume it stops
             % loop_after_V_tol*dt = Time_stop
             if V_each_step <= V_tol
@@ -342,40 +340,40 @@ for q = q_range
         %% Record the max_g, depth, deviation distance and falling time of each orientation
         % If the acceleration excesses the maximum allowed value, 
         % we assume its deviation distance and stopping time are -1.
-       max_g_n = mean(Max_g_of_different_orientation);
        if acceleration_excess == 1
-            Max_g_of_different_orientation = [Max_g_of_different_orientation; max(center_node_g)/9.8];
-            deviation_distance = [deviation_distance; -1];
-            Falling_time = [Falling_time; -1];    
-            deepest_y  = [deepest_y ; deepest_y_of_each_orientation];
+            Max_g_of_different_orientation(aa) = max(center_node_g)/9.8;
+            deviation_distance(aa) = -1;
+            Falling_time(aa) = -1;    
+            deepest_y(aa)  = deepest_y_of_each_orientation;
        else
-            Max_g_of_different_orientation = [Max_g_of_different_orientation; max(center_node_g)/9.8];
-            deviation_distance = [deviation_distance; abs(N(1,nnodes))];
-            Falling_time = [Falling_time; dt*loop];   
-            deepest_y  = [deepest_y ; deepest_y_of_each_orientation];
+            Max_g_of_different_orientation(aa) = max(center_node_g)/9.8;
+            deviation_distance(aa) = abs(N(1,nnodes));
+            Falling_time(aa) = dt*loop;   
+            deepest_y(aa) = deepest_y_of_each_orientation;
        end
             %% Max and Min Stresses
-        sigma_ss_max_n = [sigma_ss_max_n; max(sigma_ss_max)];
-        sigma_ss_min_n = [sigma_ss_min_n; min(sigma_ss_min)];
+        sigma_ss_max_n(aa) = max(sigma_ss_max);
+        sigma_ss_min_n(aa) = min(sigma_ss_min);
         
-        sigma_si_max_n = [sigma_si_max_n; max(sigma_si_max)];
-        sigma_si_min_n = [sigma_si_min_n; min(sigma_si_min)];
+        sigma_si_max_n(aa) = max(sigma_si_max);
+        sigma_si_min_n(aa) = min(sigma_si_min);
         
-        sigma_bar_max_n = [sigma_bar_max_n; max(sigma_bar_max)];
-        sigma_bar_min_n = [sigma_bar_min_n; min(sigma_bar_min)];
+        sigma_bar_max_n(aa) = max(sigma_bar_max);
+        sigma_bar_min_n(aa) = min(sigma_bar_min);
         
-        sigma_si_diff_n = [sigma_si_diff_n; max(sigma_si_diff)];
-        sigma_ss_diff_n = [sigma_ss_diff_n; max(sigma_ss_diff)];
-        sigma_b_c_diff_n = [sigma_b_c_diff_n; max(sigma_b_c_diff)];
-        sigma_b_t_diff_n = [sigma_b_t_diff_n; max(sigma_b_t_diff)];
+        sigma_si_diff_n(aa) = max(sigma_si_diff);
+        sigma_ss_diff_n(aa) = max(sigma_ss_diff);
+        sigma_b_c_diff_n(aa) = max(sigma_b_c_diff);
+        sigma_b_t_diff_n(aa) = max(sigma_b_t_diff);
     %% Plot outputs to find averages
-        mean_g(aa) = mean(Max_g_of_different_orientation)
-        mean_sig_ss_max(aa) = mean(sigma_ss_max_n)/1e8;
-        mean_sig_si_max(aa) = mean(sigma_si_max_n)/1e8;
-        mean_sig_ss_min(aa) = mean(sigma_ss_min_n)/1e8;
-        mean_sig_si_min(aa) = mean(sigma_si_min_n)/1e8;
-        mean_sig_b_max(aa) = mean(sigma_bar_max_n)/1e8;
-        mean_sig_b_min(aa) = mean(sigma_bar_min_n)/1e8;
+        
+        mean_g(aa) = mean(Max_g_of_different_orientation(1:aa));
+        mean_sig_ss_max(aa) = mean(sigma_ss_max_n(1:aa))/1e8;
+        mean_sig_si_max(aa) = mean(sigma_si_max_n(1:aa))/1e8;
+        mean_sig_ss_min(aa) = mean(sigma_ss_min_n(1:aa))/1e8;
+        mean_sig_si_min(aa) = mean(sigma_si_min_n(1:aa))/1e8;
+        mean_sig_b_max(aa) = mean(sigma_bar_max_n(1:aa))/1e8;
+        mean_sig_b_min(aa) = mean(sigma_bar_min_n(1:aa))/1e8;
         
         if aa>10
             std_mean_g = std(mean_g(:,end-5:end));
@@ -389,7 +387,16 @@ for q = q_range
         
         
         if aa>10 && std_mean_g<0.2 && std_mean_sig_ss_max<0.2 && std_mean_sig_si_max<0.2 && std_mean_sig_ss_min<0.2 && std_mean_sig_si_min<0.2 && std_mean_sig_b_max<0.2 && std_mean_sig_b_min<0.2
-            plot(1:aa, mean_g)
+            figure
+            %plot(1:aa, mean_g)
+            plot(1:aa, std_mean_sig_ss_max)
+            hold on
+            plot(1:aa, std_mean_sig_si_max)
+            plot(1:aa, std_mean_sig_ss_min)
+            plot(1:aa, std_mean_sig_si_min)
+            plot(1:aa, std_mean_sig_b_max)
+            plot(1:aa, std_mean_sig_b_min)
+            hold off
             break;
         end
         

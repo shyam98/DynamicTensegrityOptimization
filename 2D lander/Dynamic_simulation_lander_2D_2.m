@@ -212,6 +212,7 @@ for m_s_total = [1/32*m_load] % Test which values of m_s is the best choice
                             ddn = invM*(f_e - f_I);
                             %% Check the acceleration of the central node
                             center_node_g = [center_node_g, sqrt(ddn(1+D*(nnodes-1))^2 + ddn(2+D*(nnodes-1))^2) ];
+                            max(center_node_g)
                             %  acceleration_excess = 1 represents that the acceleration excesses the maximum allowed
                             %  value.
                             if sqrt(ddn(1+D*(nnodes-1))^2 + ddn(2+D*(nnodes-1))^2) >= abs(acceleration_tol)
