@@ -1,8 +1,11 @@
 function [dn] = initialvelocity(N,height,v_0,dtheta_max,nnodes)
 %UNTITLED5 Summary of this function goes here
     % Separate the v_0 into random components of x y z
-    v_x = rand() * 0.05 * v_0;
-    v_z = rand() * 0.05 * v_0;
+    x_rand = rand() * 0.05;
+    z_rand = 0.05 - x_rand;
+    
+    v_x = x_rand * v_0;
+    v_z = z_rand * v_0;
     v_y = sqrt((v_0^2)-(v_x^2)-(v_z^2));
 %   Detailed explanation goes here
     
