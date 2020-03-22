@@ -55,7 +55,7 @@ E_b = 11e10; % Elastic Modulus
 c_b = 0;      % Strain damping coefficient
 % ------------------- strings ----------------------
 rho_s = 1123; % Density
-E_s = 1e08;   % Elastic Modulus
+E_s = 10e06;   % Elastic Modulus
 c_s = 5e06;   % Strain damping coefficient 
 %% ======================== Display parameters ============================
 % number_of_configurations means how many configurations will be displayed.
