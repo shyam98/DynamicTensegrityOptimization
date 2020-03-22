@@ -402,7 +402,9 @@ for q = q_range
     std_mean_g;
     if aa>10
         figure()
-        plot(std_mean_g)
+        plot(mean_g)
+        xlabel('Number of Runs')
+        ylabel('Mean Center G-force')
         figure()
         plot(std_mean_sig_ss_max)
         figure()
