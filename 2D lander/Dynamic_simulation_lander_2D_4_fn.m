@@ -386,22 +386,29 @@ for q = q_range
         end
         
         
-        if aa>10 && std_mean_g<0.2 && std_mean_sig_ss_max<0.2 && std_mean_sig_si_max<0.2 && std_mean_sig_ss_min<0.2 && std_mean_sig_si_min<0.2 && std_mean_sig_b_max<0.2 && std_mean_sig_b_min<0.2
-            figure
-            %plot(1:aa, mean_g)
-            plot(1:aa, std_mean_sig_ss_max)
-            hold on
-            plot(1:aa, std_mean_sig_si_max)
-            plot(1:aa, std_mean_sig_ss_min)
-            plot(1:aa, std_mean_sig_si_min)
-            plot(1:aa, std_mean_sig_b_max)
-            plot(1:aa, std_mean_sig_b_min)
-            hold off
-            break;
-        end
+%         if aa>10 && std_mean_g<0.2 && std_mean_sig_ss_max<0.2 && std_mean_sig_si_max<0.2 && std_mean_sig_ss_min<0.2 && std_mean_sig_si_min<0.2 && std_mean_sig_b_max<0.2 && std_mean_sig_b_min<0.2
+%             
+%             plot(1:aa, std_mean_sig_ss_max)
+%             plot(1:aa, std_mean_sig_si_max)
+%             plot(1:aa, std_mean_sig_ss_min)
+%             plot(1:aa, std_mean_sig_si_min)
+%             plot(1:aa, std_mean_sig_b_max)
+%             plot(1:aa, std_mean_sig_b_min)
+%         end
         
         
     end
+    
+    if aa>10
+        plot(1:aa, std_mean_g)
+        plot(1:aa, std_mean_sig_ss_max)
+        plot(1:aa, std_mean_sig_si_max)
+        plot(1:aa, std_mean_sig_ss_min)
+        plot(1:aa, std_mean_sig_si_min)
+        plot(1:aa, std_mean_sig_b_max)
+        plot(1:aa, std_mean_sig_b_min)        
+    end
+    
 
     % =========================================================================================================
     % The ending of one configuration
