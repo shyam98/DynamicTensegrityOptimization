@@ -398,7 +398,8 @@ for q = q_range
         
         
     end
-    
+    mean_g
+    std_mean_g
     if aa>10
         figure()
         plot(1:aa, std_mean_g)
