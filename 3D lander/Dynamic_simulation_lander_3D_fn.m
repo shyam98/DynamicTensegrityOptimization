@@ -96,14 +96,14 @@ Zmax = []; Zmin = [];
 %   Start dynamic simulation 
 %   ============================================================================================
 % Loops for m_s (1/32*m_load,1/16*m_load,1/8*m_load,1/4*m_load,...)
-for m_s_total = [1/16*m_load] 
+for m_s_total = (1/16*m_load)
     for p = p_range % p = 3, 4 ,5
         for q = q_range % q = 4 ,5
             %% ==================== node matrix and C_s, C_b ======================
             [N_norotation,C_b,C_s,nnodes,n_s,n_b] = Lander_3D(q,p,r);
             C_sT = C_s'; C_bT = C_b';
             %%  Loops for m_b (1/32*m_load,1/16*m_load,1/8*m_load,1/4*m_load,...)
-                for m_b_total = [1/2*m_load]
+                for m_b_total = (1/2*m_load)
                     % aa is the number of orientations for one configurations
                     for aa = 1:number_of_orientation
                         deepest_y_of_each_orientation = 0; 
@@ -211,8 +211,8 @@ for m_s_total = [1/16*m_load]
                                 %% Internal force                              
                                 [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium);
                                 %% Keep track of stresses
-                                sigma_ss_max = [sigma_ss_max; max(sigma_ss_dt)];
-                                sigma_ss_min = [sigma_ss_min; min(sigma_ss_dt)];
+                                sigma_ss_max(loop) = max(sigma_ss_dt);
+                                sigma_ss_min(loop) = [sigma_ss_min; min(sigma_ss_dt)];
 
                                 sigma_si_max = [sigma_si_max; max(sigma_si_dt)];
                                 sigma_si_min = [sigma_si_min; min(sigma_si_dt)];
@@ -370,8 +370,8 @@ for m_s_total = [1/16*m_load]
                     % The ending of one configuration
                     % =========================================================================================================
                 end 
-            end
         end
+    end
 end
 %  ============================================================================================
 %   End dynamic simulation 

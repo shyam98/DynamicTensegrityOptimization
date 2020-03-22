@@ -402,19 +402,19 @@ for q = q_range
     std_mean_g;
     if aa>10
         figure()
-        plot(1:aa, std_mean_g)
+        plot(std_mean_g)
         figure()
-        plot(1:aa, std_mean_sig_ss_max)
+        plot(std_mean_sig_ss_max)
         figure()
-        plot(1:aa, std_mean_sig_si_max)
+        plot(std_mean_sig_si_max)
         figure()
-        plot(1:aa, std_mean_sig_ss_min)
+        plot(std_mean_sig_ss_min)
         figure()
-        plot(1:aa, std_mean_sig_si_min)
+        plot(std_mean_sig_si_min)
         figure()
-        plot(1:aa, std_mean_sig_b_max)
+        plot(std_mean_sig_b_max)
         figure()
-        plot(1:aa, std_mean_sig_b_min)        
+        plot(std_mean_sig_b_min)        
     end
     
 
