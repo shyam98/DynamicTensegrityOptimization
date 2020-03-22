@@ -368,12 +368,12 @@ for q = q_range
     %% Plot outputs to find averages
         
         mean_g(aa) = mean(Max_g_of_different_orientation(1:aa));
-        mean_sig_ss_max(aa) = mean(sigma_ss_max_n(1:aa))/1e8;
-        mean_sig_si_max(aa) = mean(sigma_si_max_n(1:aa))/1e8;
-        mean_sig_ss_min(aa) = mean(sigma_ss_min_n(1:aa))/1e8;
-        mean_sig_si_min(aa) = mean(sigma_si_min_n(1:aa))/1e8;
-        mean_sig_b_max(aa) = mean(sigma_bar_max_n(1:aa))/1e8;
-        mean_sig_b_min(aa) = mean(sigma_bar_min_n(1:aa))/1e8;
+        mean_sig_ss_max(aa) = mean(sigma_ss_max_n(1:aa))/1e6;
+        mean_sig_si_max(aa) = mean(sigma_si_max_n(1:aa))/1e6;
+        mean_sig_ss_min(aa) = mean(sigma_ss_min_n(1:aa))/1e6;
+        mean_sig_si_min(aa) = mean(sigma_si_min_n(1:aa))/1e6;
+        mean_sig_b_max(aa) = mean(sigma_bar_max_n(1:aa))/1e6;
+        mean_sig_b_min(aa) = mean(sigma_bar_min_n(1:aa))/1e6;
                 
         
 %         if aa>10 && std_mean_g<0.2 && std_mean_sig_ss_max<0.2 && std_mean_sig_si_max<0.2 && std_mean_sig_ss_min<0.2 && std_mean_sig_si_min<0.2 && std_mean_sig_b_max<0.2 && std_mean_sig_b_min<0.2
@@ -393,25 +393,25 @@ for q = q_range
         figure()
         plot(mean_g)
         xlabel('Number of Runs')
-        ylabel('Mean Center G-force')
+        ylabel('Mean Center G-force (g)')
         figure()
         plot(mean_sig_ss_max)
-        ylabel('Mean Stress SS Max')
+        ylabel('Mean Stress SS Max (MPa)')
         figure()
         plot(mean_sig_si_max)
-        ylabel('Mean Stress Si Max')
+        ylabel('Mean Stress Si Max (MPa)')
         figure()
         plot(mean_sig_ss_min)
-        ylabel('Mean Stress SS Min')
+        ylabel('Mean Stress SS Min (MPa)')
         figure()
         plot(mean_sig_si_min)
-        ylabel('Mean Stress Si Min')
+        ylabel('Mean Stress Si Min (MPa)')
         figure()
         plot(mean_sig_b_max)
-        ylabel('Mean Stres Bar Max')
+        ylabel('Mean Stres Bar Max (MPa)')
         figure()
         plot(mean_sig_b_min)
-        ylabel('Mean Stres Bar Min')
+        ylabel('Mean Stres Bar Min (MPa)')
     end
     
 
