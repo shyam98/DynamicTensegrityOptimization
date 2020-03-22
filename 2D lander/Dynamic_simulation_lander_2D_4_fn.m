@@ -374,17 +374,7 @@ for q = q_range
         mean_sig_si_min(aa) = mean(sigma_si_min_n(1:aa))/1e8;
         mean_sig_b_max(aa) = mean(sigma_bar_max_n(1:aa))/1e8;
         mean_sig_b_min(aa) = mean(sigma_bar_min_n(1:aa))/1e8;
-        
-        if aa>10
-            std_mean_g(aa) = std(mean_g(:,end-5:end));
-            std_mean_sig_ss_max(aa) = std(mean_sig_ss_max(:,end-5:end));
-            std_mean_sig_si_max(aa) = std(mean_sig_si_max(:,end-5:end));
-            std_mean_sig_ss_min(aa) = std(mean_sig_ss_min(:,end-5:end));
-            std_mean_sig_si_min(aa) = std(mean_sig_si_min(:,end-5:end));
-            std_mean_sig_b_max(aa) = std(mean_sig_b_max(:,end-5:end));
-            std_mean_sig_b_min(aa) = std(mean_sig_b_min(:,end-5:end));
-        end
-        
+                
         
 %         if aa>10 && std_mean_g<0.2 && std_mean_sig_ss_max<0.2 && std_mean_sig_si_max<0.2 && std_mean_sig_ss_min<0.2 && std_mean_sig_si_min<0.2 && std_mean_sig_b_max<0.2 && std_mean_sig_b_min<0.2
 %             
@@ -398,8 +388,7 @@ for q = q_range
         
         
     end
-    mean_g;
-    std_mean_g;
+
     if aa>10
         figure()
         plot(mean_g)

@@ -167,19 +167,20 @@ for m_s_total = (1/16*m_load)
                             currenttime = [];
                             loop_after_V_tol = 0;
                             acceleration_excess = 0; 
-                            sigma_ss_max = [];
-                            sigma_ss_min = [];
 
-                            sigma_si_max = [];
-                            sigma_si_min = [];
+                            sigma_ss_max = zeros(number_of_loop,1);
+                            sigma_ss_min = zeros(number_of_loop,1);
 
-                            sigma_bar_max = [];
-                            sigma_bar_min = [];
+                            sigma_si_max = zeros(number_of_loop,1);
+                            sigma_si_min = zeros(number_of_loop,1);
 
-                            sigma_ss_diff = [];
-                            sigma_si_diff = [];
-                            sigma_b_c_diff = [];
-                            sigma_b_t_diff = [];
+                            sigma_bar_max = zeros(number_of_loop,1);
+                            sigma_bar_min = zeros(number_of_loop,1);
+
+                            sigma_ss_diff = zeros(number_of_loop,1);
+                            sigma_si_diff = zeros(number_of_loop,1);
+                            sigma_b_c_diff = zeros(number_of_loop,1);
+                            sigma_b_t_diff = zeros(number_of_loop,1);
 
                             %% ====== Start simulation for each orientation =========
                             for loop = 1:number_of_loop
@@ -214,18 +215,17 @@ for m_s_total = (1/16*m_load)
                                 sigma_ss_max(loop) = max(sigma_ss_dt);
                                 sigma_ss_min(loop) = [sigma_ss_min; min(sigma_ss_dt)];
 
-                                sigma_si_max = [sigma_si_max; max(sigma_si_dt)];
-                                sigma_si_min = [sigma_si_min; min(sigma_si_dt)];
+                                sigma_si_max(loop) = max(sigma_si_dt);
+                                sigma_si_min(loop) = min(sigma_si_dt);
 
 
-                                sigma_bar_max = [sigma_bar_max; max(sigma_b)];
-                                sigma_bar_min = [sigma_bar_min; min(sigma_b)];
+                                sigma_bar_max(loop) = max(sigma_b);
+                                sigma_bar_min(loop) = min(sigma_b);
 
-
-                                sigma_ss_diff = [sigma_ss_diff; sigma_ss_diff_dt];
-                                sigma_si_diff = [sigma_si_diff; sigma_si_diff_dt];
-                                sigma_b_c_diff = [sigma_b_c_diff; sigma_b_c_diff_dt];
-                                sigma_b_t_diff = [sigma_b_t_diff; sigma_b_t_diff_dt];
+                                sigma_ss_diff(loop) = max(abs(sigma_ss_diff_dt));
+                                sigma_si_diff(loop) = max(abs(sigma_si_diff_dt));
+                                sigma_b_c_diff(loop) = max(abs(sigma_b_c_diff_dt));
+                                sigma_b_t_diff(loop) = max(abs(sigma_b_t_diff_dt));
                                 %% Finding acceleration ddn
                                 ddn = invM*(f_e - f_I);
                                 center_node_g = [center_node_g, sqrt(ddn(end-3)^2 + ddn(end-1)^2 + ddn(end)^2) ];
