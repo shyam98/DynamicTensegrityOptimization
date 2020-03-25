@@ -18,7 +18,7 @@ v_0 = -5;
 A_s = [A_ss ; A_si];
 dtheta_0 = 1*pi/180;
 
-Yield_Nylon = 9.4e7;
+Yield_Nylon = 5e7;
 Yield_Titanium = 1e9;
 Youngs_Titanium = 115e9;
 % ======================= Environment Properties ==========================
