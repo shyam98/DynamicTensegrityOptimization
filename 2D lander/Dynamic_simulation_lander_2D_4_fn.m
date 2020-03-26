@@ -388,7 +388,7 @@ for q = q_range
 
         end
         
-        if aa>10 && abs(conv_mean_g)<0.2 && abs(conv_ss_max)<0.2 && abs(conv_ss_min)<0.2 && abs(conv_si_max)<0.2 && abs(conv_si_min)<0.2 && abs(conv_b_max)<1 && abs(conv_b_min)<1
+        if aa>10 && abs(conv_mean_g)<0.1 && abs(conv_ss_max)<0.1 && abs(conv_ss_min)<0.1 && abs(conv_si_max)<0.1 && abs(conv_si_min)<0.1 && abs(conv_b_max)<0.5 && abs(conv_b_min)<0.5
             break;
         end
         
