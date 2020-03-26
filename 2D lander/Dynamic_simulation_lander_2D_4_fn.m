@@ -128,16 +128,16 @@ for q = q_range
     mean_sig_b_max = zeros(1,number_of_orientation);
     mean_sig_b_min = zeros(1,number_of_orientation);
     
-    sigma_ss_max_n = sparse(number_of_orientation,1);
-    sigma_ss_min_n = sparse(number_of_orientation,1);
-    sigma_si_max_n = sparse(number_of_orientation,1);
-    sigma_si_min_n = sparse(number_of_orientation,1);
-    sigma_bar_max_n = sparse(number_of_orientation,1);
-    sigma_bar_min_n = sparse(number_of_orientation,1);
-    sigma_si_diff_n = sparse(number_of_orientation,1);
-    sigma_ss_diff_n = sparse(number_of_orientation,1);
-    sigma_b_c_diff_n = sparse(number_of_orientation,1);
-    sigma_b_t_diff_n = sparse(number_of_orientation,1);
+    sigma_ss_max_n = zeros(number_of_orientation,1);
+    sigma_ss_min_n = zeros(number_of_orientation,1);
+    sigma_si_max_n = zeros(number_of_orientation,1);
+    sigma_si_min_n = zeros(number_of_orientation,1);
+    sigma_bar_max_n = zeros(number_of_orientation,1);
+    sigma_bar_min_n = zeros(number_of_orientation,1);
+    sigma_si_diff_n = zeros(number_of_orientation,1);
+    sigma_ss_diff_n = zeros(number_of_orientation,1);
+    sigma_b_c_diff_n = zeros(number_of_orientation,1);
+    sigma_b_t_diff_n = zeros(number_of_orientation,1);
     
     for aa = 1:number_of_orientation
         %% Node position matrix n
