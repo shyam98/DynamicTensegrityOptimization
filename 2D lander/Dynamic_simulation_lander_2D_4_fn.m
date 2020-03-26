@@ -69,7 +69,7 @@ display_node_x_position = zeros(length(display_node),number_of_loop);
 display_node_y_position = zeros(length(display_node),number_of_loop);
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
-Max_g_of_different_orientation = zeros(number_of_orientation, 1); % Store Maximum acceleration of all orientations
+Max_g_of_different_orientation = sparse(number_of_orientation, 1); % Store Maximum acceleration of all orientations
 deviation_distance = zeros(number_of_orientation, 1);             % Store deviation distance of all orientations
 Falling_time = zeros(number_of_orientation, 1);                   % Store stop time of all orientations
 deepest_y = zeros(number_of_orientation, 1);                      % Store the deepest penetration of all orientations
@@ -128,16 +128,16 @@ for q = q_range
     mean_sig_b_max = zeros(1,number_of_orientation);
     mean_sig_b_min = zeros(1,number_of_orientation);
     
-    sigma_ss_max_n = zeros(number_of_orientation,1);
-    sigma_ss_min_n = zeros(number_of_orientation,1);
-    sigma_si_max_n = zeros(number_of_orientation,1);
-    sigma_si_min_n = zeros(number_of_orientation,1);
-    sigma_bar_max_n = zeros(number_of_orientation,1);
-    sigma_bar_min_n = zeros(number_of_orientation,1);
-    sigma_si_diff_n = zeros(number_of_orientation,1);
-    sigma_ss_diff_n = zeros(number_of_orientation,1);
-    sigma_b_c_diff_n = zeros(number_of_orientation,1);
-    sigma_b_t_diff_n = zeros(number_of_orientation,1);
+    sigma_ss_max_n = sparse(number_of_orientation,1);
+    sigma_ss_min_n = sparse(number_of_orientation,1);
+    sigma_si_max_n = sparse(number_of_orientation,1);
+    sigma_si_min_n = sparse(number_of_orientation,1);
+    sigma_bar_max_n = sparse(number_of_orientation,1);
+    sigma_bar_min_n = sparse(number_of_orientation,1);
+    sigma_si_diff_n = sparse(number_of_orientation,1);
+    sigma_ss_diff_n = sparse(number_of_orientation,1);
+    sigma_b_c_diff_n = sparse(number_of_orientation,1);
+    sigma_b_t_diff_n = sparse(number_of_orientation,1);
     
     for aa = 1:number_of_orientation
         %% Node position matrix n
