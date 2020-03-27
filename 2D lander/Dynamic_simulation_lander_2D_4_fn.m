@@ -21,6 +21,15 @@ dtheta_0 = 1*pi/180;
 Yield_Nylon = 5e7;
 Yield_Titanium = 1e9;
 Youngs_Titanium = 115e9;
+
+ctol_bar_max = 1
+ctol_bar_min = 1
+ctol_g_max = 0.2
+ctol_ss_max = 0.2
+ctol_ss_min = 0.2
+ctol_si_max = 0.2
+ctol_si_min = 0.2
+
 % ======================= Environment Properties ==========================
 % pc = ground bounce constant; Cc = ground damping coefficient
 % eta = ground frictional coefficient; % g_mars = Gravitational
@@ -69,7 +78,7 @@ display_node_x_position = zeros(length(display_node),number_of_loop);
 display_node_y_position = zeros(length(display_node),number_of_loop);
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
-Max_g_of_different_orientation = sparse(number_of_orientation, 1); % Store Maximum acceleration of all orientations
+Max_g_of_different_orientation = zeros(number_of_orientation, 1); % Store Maximum acceleration of all orientations
 deviation_distance = zeros(number_of_orientation, 1);             % Store deviation distance of all orientations
 Falling_time = zeros(number_of_orientation, 1);                   % Store stop time of all orientations
 deepest_y = zeros(number_of_orientation, 1);                      % Store the deepest penetration of all orientations
@@ -378,17 +387,16 @@ for q = q_range
         %If minimum number of runs is reached, check if the last 10 runs
         %have a divergence under a given value for each value
         if aa>10
-            conv_mean_g = max(mean_g(end-9:end)) - min(mean_g(end-9:end))
+            conv_mean_g = max(mean_g(end-9:end)) - min(mean_g(end-9:end));
             conv_ss_max = max(mean_sig_ss_max(aa-9:aa)) - min(mean_sig_ss_max(aa-9:aa));
             conv_ss_min = max(mean_sig_ss_min(aa-9:aa)) - min(mean_sig_ss_min(aa-9:aa));
             conv_si_max = max(mean_sig_si_max(aa-9:aa)) - min(mean_sig_si_max(aa-9:aa));
             conv_si_min = max(mean_sig_si_min(aa-9:aa)) - min(mean_sig_si_min(aa-9:aa));
             conv_b_max = max(mean_sig_b_max(aa-9:aa)) - min(mean_sig_b_max(aa-9:aa));
             conv_b_min = max(mean_sig_b_min(aa-9:aa)) - min(mean_sig_b_min(aa-9:aa));
-
         end
-        
-        if aa>20 && abs(conv_mean_g)<0.1 && abs(conv_ss_max)<0.1 && abs(conv_ss_min)<0.1 && abs(conv_si_max)<0.1 && abs(conv_si_min)<0.1 && abs(conv_b_max)<0.5 && abs(conv_b_min)<0.5
+
+        if aa>20 && abs(conv_mean_g)<ctol_g_max && abs(conv_ss_max)<ctol_ss_max && abs(conv_ss_min)<ctol_ss_min && abs(conv_si_max)<ctol_si_max && abs(conv_si_min)<ctol_si_min && abs(conv_b_max)<ctol_bar_max && abs(conv_b_min)<ctol_bar_min
             break;
         end
         
