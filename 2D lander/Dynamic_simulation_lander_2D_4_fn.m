@@ -378,17 +378,17 @@ for q = q_range
         %If minimum number of runs is reached, check if the last 10 runs
         %have a divergence under a given value for each value
         if aa>10
-            conv_mean_g = max(mean_g(end-9:end)) - min(mean_g(end-9:end));
-            conv_ss_max = max(mean_sig_ss_max(end-9:end)) - min(mean_sig_ss_max(end-9:end));
-            conv_ss_min = max(mean_sig_ss_min(end-9:end)) - min(mean_sig_ss_min(end-9:end));
-            conv_si_max = max(mean_sig_si_max(end-9:end)) - min(mean_sig_si_max(end-9:end));
-            conv_si_min = max(mean_sig_si_min(end-9:end)) - min(mean_sig_si_min(end-9:end));
-            conv_b_max = max(mean_sig_b_max(end-9:end)) - min(mean_sig_b_max(end-9:end));
-            conv_b_min = max(mean_sig_b_min(end-9:end)) - min(mean_sig_b_min(end-9:end));
+            conv_mean_g = max(mean_g(end-9:end)) - min(mean_g(end-9:end))
+            conv_ss_max = max(mean_sig_ss_max(end-9:end)) - min(mean_sig_ss_max(end-9:end))
+            conv_ss_min = max(mean_sig_ss_min(end-9:end)) - min(mean_sig_ss_min(end-9:end))
+            conv_si_max = max(mean_sig_si_max(end-9:end)) - min(mean_sig_si_max(end-9:end))
+            conv_si_min = max(mean_sig_si_min(end-9:end)) - min(mean_sig_si_min(end-9:end))
+            conv_b_max = max(mean_sig_b_max(end-9:end)) - min(mean_sig_b_max(end-9:end))
+            conv_b_min = max(mean_sig_b_min(end-9:end)) - min(mean_sig_b_min(end-9:end))
 
         end
         
-        if aa>10 && abs(conv_mean_g)<0.1 && abs(conv_ss_max)<0.1 && abs(conv_ss_min)<0.1 && abs(conv_si_max)<0.1 && abs(conv_si_min)<0.1 && abs(conv_b_max)<0.5 && abs(conv_b_min)<0.5
+        if aa>20 && abs(conv_mean_g)<0.1 && abs(conv_ss_max)<0.1 && abs(conv_ss_min)<0.1 && abs(conv_si_max)<0.1 && abs(conv_si_min)<0.1 && abs(conv_b_max)<0.5 && abs(conv_b_min)<0.5
             break;
         end
         
