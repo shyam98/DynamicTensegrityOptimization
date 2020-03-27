@@ -379,12 +379,12 @@ for q = q_range
         %have a divergence under a given value for each value
         if aa>10
             conv_mean_g = max(mean_g(end-9:end)) - min(mean_g(end-9:end))
-            conv_ss_max = max(mean_sig_ss_max(end-9:end)) - min(mean_sig_ss_max(end-9:end))
-            conv_ss_min = max(mean_sig_ss_min(end-9:end)) - min(mean_sig_ss_min(end-9:end))
-            conv_si_max = max(mean_sig_si_max(end-9:end)) - min(mean_sig_si_max(end-9:end))
-            conv_si_min = max(mean_sig_si_min(end-9:end)) - min(mean_sig_si_min(end-9:end))
-            conv_b_max = max(mean_sig_b_max(end-9:end)) - min(mean_sig_b_max(end-9:end))
-            conv_b_min = max(mean_sig_b_min(end-9:end)) - min(mean_sig_b_min(end-9:end))
+            conv_ss_max = max(mean_sig_ss_max(aa-9:aa)) - min(mean_sig_ss_max(aa-9:aa));
+            conv_ss_min = max(mean_sig_ss_min(aa-9:aa)) - min(mean_sig_ss_min(aa-9:aa));
+            conv_si_max = max(mean_sig_si_max(aa-9:aa)) - min(mean_sig_si_max(aa-9:aa));
+            conv_si_min = max(mean_sig_si_min(aa-9:aa)) - min(mean_sig_si_min(aa-9:aa));
+            conv_b_max = max(mean_sig_b_max(aa-9:aa)) - min(mean_sig_b_max(aa-9:aa));
+            conv_b_min = max(mean_sig_b_min(aa-9:aa)) - min(mean_sig_b_min(aa-9:aa));
 
         end
         
