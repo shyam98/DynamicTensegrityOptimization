@@ -22,13 +22,13 @@ Yield_Nylon = 5e7;
 Yield_Titanium = 1e9;
 Youngs_Titanium = 115e9;
 
-ctol_bar_max = 1
-ctol_bar_min = 1
-ctol_g_max = 0.2
-ctol_ss_max = 0.2
-ctol_ss_min = 0.2
-ctol_si_max = 0.2
-ctol_si_min = 0.2
+ctol_bar_max = 1;
+ctol_bar_min = 1;
+ctol_g_max = 0.2;
+ctol_ss_max = 0.2;
+ctol_ss_min = 0.2;
+ctol_si_max = 0.2;
+ctol_si_min = 0.2;
 
 % ======================= Environment Properties ==========================
 % pc = ground bounce constant; Cc = ground damping coefficient
