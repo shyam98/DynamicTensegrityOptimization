@@ -218,7 +218,7 @@ for aa = 1:number_of_orientation
             [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium);
             %% Keep track of stresses
             sigma_ss_max(loop) = max(sigma_ss_dt);
-            sigma_ss_min(loop) = [sigma_ss_min; min(sigma_ss_dt)];
+            sigma_ss_min(loop) = min(sigma_ss_dt);
 
             sigma_si_max(loop) = max(sigma_si_dt);
             sigma_si_min(loop) = min(sigma_si_dt);
@@ -232,7 +232,7 @@ for aa = 1:number_of_orientation
             sigma_b_c_diff(loop) = max(abs(sigma_b_c_diff_dt));
             sigma_b_t_diff(loop) = max(abs(sigma_b_t_diff_dt));
             %% Finding acceleration ddn
-            ddn = invM*(f_e - f_I);
+            ddn = M\(f_e - f_I);
             center_node_g(loop) = (sqrt(ddn(end-3)^2 + ddn(end-1)^2 + ddn(end)^2));
             % Check the acceleration if it is excess the maximum value
             if center_node_g(end) >= acceleration_tol
