@@ -16,14 +16,14 @@ if isempty(r_b)
  r_b = 0.02;
 end
 
-p = input('Input bar configuration, default 2 -- p = ');
+p = input('Input bar configuration, default 3 -- p = ');
 if isempty(p)
- p = 2;
+ p = 3;
 end
 
-q = input('Input string configuration, default 6 -- q = ');
+q = input('Input string configuration, default 4 -- q = ');
 if isempty(q)
- q = 6;
+ q = 4;
 end
 
 r = input('Input lattice radius, default 1.5 -- r = ');

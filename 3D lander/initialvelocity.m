@@ -8,7 +8,6 @@ function [dn] = initialvelocity(N,height,v_0,dtheta_max,nnodes)
     v_z = z_rand * v_0;
     v_y = sqrt((v_0^2)-(v_x^2)-(v_z^2));
 %   Detailed explanation goes here
-    
     dtheta = rand(3,1)*2-1;
     dtheta_x0 = dtheta_max * dtheta(1) / norm(dtheta);
     dtheta_y0 = dtheta_max * dtheta(2) / norm(dtheta);
