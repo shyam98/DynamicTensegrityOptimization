@@ -62,7 +62,7 @@ g_mars = -3.711;
 % is assume to stop when the average speed of all nodes remains below 
 % 0.05 m/s for 2500 loops (2 sec).
 dt = 1*10^(-4);
-total_time = 20;
+total_time = 0.1;
 number_of_loop = total_time/dt;
 V_tol = 0.05;
 Time_stop = 2/dt;
@@ -327,12 +327,12 @@ for aa = 1:number_of_orientation
        % =========================================================================================================
         %% Record the max_g, depth, deviation distance and falling time of each orientation
        if acceleration_excess == 1
-            Max_g_of_different_orientation = [Max_g_of_different_orientation; max(center_node_g)/9.8];
+            Max_g_of_different_orientation(aa) = max(center_node_g)/9.8;
             deviation_distance = [deviation_distance; -1];
             Falling_time = [Falling_time; -1];    
             deepest_y  = [deepest_y ; deepest_y_of_each_orientation];
        else
-            Max_g_of_different_orientation = [Max_g_of_different_orientation; max(center_node_g)/9.8];
+            Max_g_of_different_orientation(aa) = max(center_node_g)/9.8;
             deviation_distance = [deviation_distance; sqrt( N(1,nnodes)^2 + N(3,nnodes)^2) ];
             Falling_time = [Falling_time; dt*loop];   
             deepest_y  = [deepest_y ; deepest_y_of_each_orientation];
@@ -429,12 +429,12 @@ plot(currenttime,center_node_g/9.8)
 xlabel('time [s]')
 ylabel('Acceleration of the center node [g_earth]')
     
-re = reshape(Max_g_of_different_orientation,[20,42]);
+%re = reshape(Max_g_of_different_orientation,[20,42]);
     
 toc
-
-sound(sin(2*pi*25*(1:4000)/100));
-pause(1);
-sound(sin(2*pi*25*(1:4000)/100));
+% 
+% sound(sin(2*pi*25*(1:4000)/100));
+% pause(1);
+% sound(sin(2*pi*25*(1:4000)/100));
 
 end
