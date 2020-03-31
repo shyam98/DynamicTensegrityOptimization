@@ -61,7 +61,7 @@ g_mars = -3.711;
 % "Time_stop" loops, we assume the lander stops. In this case, the lander
 % is assume to stop when the average speed of all nodes remains below 
 % 0.05 m/s for 2500 loops (2 sec).
-dt = 2*10^(-3);
+dt = 1*10^(-4);
 total_time = 20;
 number_of_loop = total_time/dt;
 V_tol = 0.05;
@@ -337,20 +337,20 @@ for aa = 1:number_of_orientation
             Falling_time = [Falling_time; dt*loop];   
             deepest_y  = [deepest_y ; deepest_y_of_each_orientation];
        end 
-%         %% If the maximum acceleration is greater than 50*g_earth, we need to re-simulate this orientation again.
-%         if max(center_node_g)/9.8 >= 50 && resimulate ~= 1
-%             theta = [theta ; theta_0x  theta_0y  theta_0z ]
-%             resimulate = 1;
-%             Max_g_of_different_orientation(end) = [];
-%             %deviation_distance(end) = [];
-%             %Falling_time(end) = [];   
-%             deepest_y(end)  = [];
-%             max(center_node_g)/9.8
-%         else
-%             simulate = false;
-%             dt = 1*10^(-4);
-%             number_of_loop = total_time/dt;
-%         end        
+        %% If the maximum acceleration is greater than 50*g_earth, we need to re-simulate this orientation again.
+        if max(center_node_g)/9.8 >= 500 && resimulate ~= 1
+            theta = [theta ; theta_0x  theta_0y  theta_0z ]
+            resimulate = 1;
+            Max_g_of_different_orientation(end) = [];
+            %deviation_distance(end) = [];
+            %Falling_time(end) = [];   
+            deepest_y(end)  = [];
+            max(center_node_g)/9.8
+        else
+            simulate = false;
+            dt = 1*10^(-4);
+            number_of_loop = total_time/dt;
+        end        
         %% Max and Min Stresses
         sigma_ss_max_n(aa) = max(sigma_ss_max);
         sigma_ss_min_n(aa) = min(sigma_ss_min);
