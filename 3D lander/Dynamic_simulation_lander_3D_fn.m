@@ -62,7 +62,7 @@ g_mars = -3.711;
 % is assume to stop when the average speed of all nodes remains below 
 % 0.05 m/s for 2500 loops (2 sec).
 dt = 1*10^(-4);
-total_time = 10;
+total_time = 5;
 number_of_loop = total_time/dt;
 V_tol = 0.05;
 Time_stop = 2/dt;
