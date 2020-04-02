@@ -21,8 +21,6 @@ v_0 = -5;
 m_load = 500;
 dtheta_max = 1*pi/180;
 
-
-
 sigma_ss_max_n = zeros(number_of_orientation,1);
 sigma_ss_min_n = zeros(number_of_orientation,1);
 sigma_si_max_n = zeros(number_of_orientation,1);
@@ -366,6 +364,14 @@ for aa = 1:number_of_orientation
         sigma_b_c_diff_n(aa) = max(sigma_b_c_diff);
         sigma_b_t_diff_n(aa) = max(sigma_b_t_diff);
         
+        %% Running Average Values 
+        mean_g(aa) = mean(Max_g_of_different_orientation(1:aa));
+        mean_sig_ss_max(aa) = mean(sigma_ss_max_n(1:aa))/1e6;
+        mean_sig_si_max(aa) = mean(sigma_si_max_n(1:aa))/1e6;
+        mean_sig_ss_min(aa) = mean(sigma_ss_min_n(1:aa))/1e6;
+        mean_sig_si_min(aa) = mean(sigma_si_min_n(1:aa))/1e6;
+        mean_sig_b_max(aa) = mean(sigma_bar_max_n(1:aa))/1e6;
+        mean_sig_b_min(aa) = mean(sigma_bar_min_n(1:aa))/1e6; 
         
         %If minimum number of runs is reached, check if the last 10 runs
         %have a divergence under a given value for each value

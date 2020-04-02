@@ -4,6 +4,8 @@ function [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initia
     % Finding initial length matrix and current length matrix (both are n_s*1 matrix)
     
     s_nowlength = [];  
+    s_nowlength = zeros(5,1)
+    
     s_initiallength = [];
     for i = 1:n_s
         s_initiallength = [s_initiallength; sqrt( s_0(1+D*(i-1))^2 + s_0(2+D*(i-1))^2 ) ];
@@ -67,6 +69,9 @@ function [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initia
     end
    
     %--------------------------  f_I --------------------------------------
+    disp(size(C_bT))
+    size(I_D)
+    size(f_b)
     f_I = kron(C_sT,I_D)*f_s + kron(C_bT,I_D)*f_b ;
 
 
