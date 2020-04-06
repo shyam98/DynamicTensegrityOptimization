@@ -7,7 +7,7 @@ function [N,Cb,Cs,nnodes,n_s,n_b] = Lander_3D(q,p)
 % p: Number of side 
 % p: Number of level
 
-L = 3; 
+L = 2; 
 
 cyl = 'SP';
 % 'RCC': right circular cylinder
@@ -16,7 +16,7 @@ cyl = 'SP';
 % 'SP': sphere
 
 % RCC 
-r = 0.5;
+r = 1;
 % REC
 ar = 0.9;
 br = 0.5;
@@ -38,11 +38,18 @@ el = 90; % 0:y, 90:z
 N = zeros(3,2*p*q+p);
 %
 c = 1; % counter
+
+%q = 4 , p = 3
+%i_test = [0 0.50 1 2.25 4 5 6 7.75 9 9.5 10]
+%i_test = [0 0.25 2 3.75 4]
+i_test = linspace(0,1,q+1).^2;
+x = [1 1 1 0.8 0.5 0.5 0.5 0.8 1 1 1];
+i2_test = [1 1 1 1 0.5 1.4 1 1 1 1 1];
 for i =0:q
     for k = 0:p-1
         for l = 1:2
             dontp = 0;
-            zl = ( 2*i + (l-1) )*L/(2*q);
+            zl = ( 2*i + (l-1) )*L/(2*q)*i2_test(i+1);
             zlv = [0;0;zl];
             tetl = (2*k + l)*pi/p;
             
