@@ -1,4 +1,4 @@
-function [N,Cb,Cs,nnodes,n_s,n_b, zl_i] = Lander_3D(q,p)
+function [N,Cb,Cs,nnodes,n_s,n_b, zl_i] = Lander_3D(q,p,r,L,cyl, C_2, z_position)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -7,16 +7,15 @@ function [N,Cb,Cs,nnodes,n_s,n_b, zl_i] = Lander_3D(q,p)
 % p: Number of side 
 % p: Number of level
 
-L = 6; 
+%L = 3; 
 
-cyl = 'RCC';
+%cyl = 'SP';
 % 'RCC': right circular cylinder
 % 'REC': right elliptic cylinder
 % 'POR': paraboloid of revolution
 % 'SP': sphere
 
 % RCC 
-r = 1;
 % REC
 ar = 0.9;
 br = 0.5;
@@ -39,26 +38,19 @@ N = zeros(3,2*p*q+p);
 %
 c = 1; % counter
 
-C_2 = -0.05;
-%C_3 = 0.0005;
+
+
 for i =0:q
     for k = 0:p-1
         for l = 1:2
             dontp = 0;
-            
-            %zl = (i*(2 - 1/q - C_2*q) + C_2*i^2 + (l-1))*L/(2*q);
-            %zl = ( (2 - 1/q - C_3*(q^2))*i + C_3*i^2 + (l-1))*L/(2*q);
-            %zl = (2*i + C_3*(i^3 - (q-1)) + (l-1))*L/(2*q);
-            %zl = (1/(q-1) * (2*q - 2 - C_2*(q-1)^2)*i + C_2*i^2 + (l-1))*L/(2*q);
-            
+            %Linear
+            %zl_p = (2*i + (l-1))
             %Second Order
             zl_p = (C_2 + 2*C_2*q-1 + (1-2*C_2*q-2*C_2)*(2*i+l) + C_2*(2*i+l)^2);
             
-            %Third Order
-            %zl_p = (C_2 + 2*C_3 + 2*C_2*q + 6*C_3*q + 4*C_3*q^2 - 1)+(1 - 3*C_3 - 2*C_2*q - 6*C_3*q - 4*C_3*q^2 - 2*C_2)*(2*i+l)+ C_2*(2*i+l)^2+C_3*(2*i+l)^3
-            
-            zl = zl_p*L/(2*q)
-            %zl = (2*i + (l-1))*L/(2*q);                
+            zl = zl_p*L/(2*q);
+           
             zl_i(i+1) = zl;
             zlv = [0;0;zl];
             tetl = (2*k + l)*pi/p;
@@ -67,15 +59,19 @@ for i =0:q
                 case 'RCC' % 'RCC': right circular cylinder
                     ar = r;
                     br = r;
+                    center_node = [0;0;z_position*L];
                 case 'REC' % 'REC': right elliptic cylinder
                     
                 case 'POR' % 'POR': paraboloid of revolution
-                    ar = (4*a*(Ld - zl))^(1/2);
-                    br = (4*a*(Ld - zl))^(1/2);
-
+                    %ar = (4*a*(Ld - zl))^(1/2);
+                    %br = (4*a*(Ld - zl))^(1/2);
+                    ar = (4*a*(Ld - (-zl + L)))^(1/2);
+                    br = (4*a*(Ld - (-zl + L)))^(1/2);
+                    center_node = [0;0;z_position*L];
                 case 'SP' % 'SP': sphere
                     ar = (Rd^2 - (zl-L/2)^2)^(1/2);
                     br = (Rd^2 - (zl-L/2)^2)^(1/2);
+                    center_node = [0;0;z_position*r];
                 otherwise
                     disp('Wrong shape input')
                     disp('Exiting')
@@ -344,22 +340,25 @@ n_s = size(CS,1);
 % Find the points which z position = 0
 sp_point = [];
 for i = 1:size(N,2)
-    if N(3,i) == 1
+    if N(3,i) == 0
        sp_point = [sp_point , i] ;
     end
 end
+
+
 % Update N and Cb
-N = [N zeros(3,1)];
+N = [N center_node];
+
 Cb = [CB zeros((2*q+1)*p,1)];
 % Update Cs
 CCC = - eye( 2*p*q+p );
 CCC = [ CCC  ones( (2*q+1)*p , 1)];
-for i = 1:size(CCC,1)
-    if ismember(i,sp_point)
-        CCC(i,i) = 0;
-        CCC(i,size(CCC,2)) = 0;
-    end
-end
+% for i = 1:size(CCC,1)
+%     if ismember(i,sp_point)
+%         CCC(i,i) = 0;
+%         CCC(i,size(CCC,2)) = 0;
+%     end
+% end
 CCC(all(CCC == 0, 2),:) = [];
 Cs = [CS  zeros(  size(CS,1) , 1 )];
 Cs = [Cs; CCC];
@@ -369,7 +368,7 @@ axis off
 view(12,15)
 %% Finding the number of nodes, strings and bars for N, Cs and Cb
 nnodes = size(N,2);
-n_s = size(Cs,1);
+n_s = size(Cs,1)
 n_b = size(Cb,1);
 
 

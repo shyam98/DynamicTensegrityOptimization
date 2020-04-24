@@ -1,4 +1,4 @@
-function [N,Cb,Cs,nnodes,n_s,n_b] = Lander_3D(q,p)
+function [N,Cb,Cs,nnodes,n_s,n_b, zl_i] = Lander_3D(q,p,r,L,cyl, C_2)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -7,16 +7,15 @@ function [N,Cb,Cs,nnodes,n_s,n_b] = Lander_3D(q,p)
 % p: Number of side 
 % p: Number of level
 
-L = 6; 
+%L = 3; 
 
-cyl = 'RCC';
+%cyl = 'SP';
 % 'RCC': right circular cylinder
 % 'REC': right elliptic cylinder
 % 'POR': paraboloid of revolution
 % 'SP': sphere
 
 % RCC 
-r = 1;
 % REC
 ar = 0.9;
 br = 0.5;
@@ -39,56 +38,20 @@ N = zeros(3,2*p*q+p);
 %
 c = 1; % counter
 
-%q = 4 , p = 3
-%i_test = [0 0.50 1 2.25 4 5 6 7.75 9 9.5 10]
-%i_test = [0 0.25 2 3.75 4]
-% i_test = linspace(0,1,q+1).^2;
-% x = [1 1 1 0.8 0.5 0.5 0.5 0.8 1 1 1];
-% 
-% 
-% iseven = rem(q,2);
-% zl_1 = L/(2*q);
-% L_diff = [];
-% if iseven == 1
-%     L_diff(1:(q-1)/2) = 1*[(q-1)/2:-1:1];
-%     L_diff((q+1)/2) = 0;
-%     L_diff((q+1)/2+1:q) = -1*([1:1:(q-1)/2]) 
-%     
-%     %Define Linear Distribution Matrix
-%     lin_const_1 = linspace(0,1,(q-1)/2 + 1);
-%     lin_const_2 = linspace(1,0,(q-1)/2 + 1); 
-%     lin_const = [lin_const_1(1:(q-1)/2), 1, lin_const_2(2:end)]
-%     lin_dist = 0.01;
-%     lin_const = lin_const.^lin_dist
-% end
-% 
-% 
-% 
-% 
-% L_diff = L_diff * zl_1 .* lin_const;
-% L_diff = [L_diff, 0]
-% %L_diff(1) = 0;
-C_2 = -0.05;
-C_3 = 0.0002;
+
+
 for i =0:q
     for k = 0:p-1
         for l = 1:2
             dontp = 0;
-            
-            %zl = (i*(2 - 1/q - C_2*q) + C_2*i^2 + (l-1))*L/(2*q);
-            %zl = ( (2 - 1/q - C_3*(q^2))*i + C_3*i^2 + (l-1))*L/(2*q);
-            %zl = (2*i + C_3*(i^3 - (q-1)) + (l-1))*L/(2*q);
-            %zl = (1/(q-1) * (2*q - 2 - C_2*(q-1)^2)*i + C_2*i^2 + (l-1))*L/(2*q);
-            
+            %Linear
+            %zl_p = (2*i + (l-1))
             %Second Order
             zl_p = (C_2 + 2*C_2*q-1 + (1-2*C_2*q-2*C_2)*(2*i+l) + C_2*(2*i+l)^2);
             
-            %Third Order
-            %zl_p = (4*C_3*q^2 + 6*C_3*q + 2*C_3 - 1) + (-4*C_3*q^2-6*C_3*q-3*C_3+1)
-            
             zl = zl_p*L/(2*q);
-            %zl = (2*i + (l-1))*L/(2*q);                
-            zl_i(i+1) = zl_p;
+           
+            zl_i(i+1) = zl;
             zlv = [0;0;zl];
             tetl = (2*k + l)*pi/p;
             
@@ -368,7 +331,7 @@ set(gca,'FontSize',15);
 %set(gca,'DefaultTextFontSize',24)
 axis equal
 
-n_s = size(CS,1);
+n_s = size(CS,1)
 %% Add the center point
 % Find the points which z position = 0
 sp_point = [];
@@ -377,8 +340,11 @@ for i = 1:size(N,2)
        sp_point = [sp_point , i] ;
     end
 end
+z_position = 1;
+center_node = [0;0;z_position*L]
 % Update N and Cb
 N = [N zeros(3,1)];
+
 Cb = [CB zeros((2*q+1)*p,1)];
 % Update Cs
 CCC = - eye( 2*p*q+p );

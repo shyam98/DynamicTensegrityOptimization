@@ -1,9 +1,9 @@
 clear all; close all; clc
 
-[N,Cb,Cs,nnodes,n_s,n_b] = Lander_3D(10,4); %Input (q,p)
+[N,Cb,Cs,nnodes,n_s,n_b, zl_i] = Lander_3D(6,4); %Input (q,p)
 
-R3Ddata.Bradius = 0.01*ones(size(Cb,1),1);
-R3Ddata.Sradius = 0.0025*ones(size(Cs,1),1);
+R3Ddata.Bradius = 0.025*ones(size(Cb,1),1);
+R3Ddata.Sradius = 0.005*ones(size(Cs,1),1);
 
 
 %The number of vertical sections is dependent on the q value.
