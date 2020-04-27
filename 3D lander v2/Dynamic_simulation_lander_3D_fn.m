@@ -1,4 +1,4 @@
-function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p, q, RL_ratio)
+function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p, q, RL_ratio, C_2, z_position)
 
 tic
 %% Input parameters
@@ -40,9 +40,9 @@ g_earth = -9.81;
 % "Time_stop" loops, we assume the lander stops. In this case, the lander
 % is assume to stop when the average speed of all nodes remains below 
 % 0.05 m/s for 2500 loops (2 sec).
-dt = 1*10^(-4);
+dt = 2*10^(-4);
 total_time = 2;
-number_of_loop = total_time/dt;
+number_of_loop = total_time/dt
 V_tol = 0.05;
 Time_stop = 2/dt;
 acceleration_tol = 5000*9.8;
@@ -71,8 +71,7 @@ c_s = 5e06;
 %   ============================================================================================
 %% ==================== node matrix and C_s, C_b ======================
 L = RL_ratio / r;
-C_2 = 0;
-cyl = 'SP';
+cyl = 'POR';
 % 'RCC': right circular cylinder
 % 'SP': sphere
 
@@ -81,7 +80,7 @@ cyl = 'SP';
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - .222*pi (20d)
 theta_0y = 0;
-theta_0x = pi;
+theta_0x = linspace(0,1.57,2);
 %Spheres
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - pi
@@ -96,8 +95,11 @@ theta_0z = 0;
 %         theta_0y = linspace(0,pi,10);
 %         theta_0x = linspace(0,0.349066,5);
 %         max_z = L
+%     case 'POR'
+%          theta_0y = linspace(0,pi,10);
+%         theta_0x = linspace(0,0.349066,5);
+%         max_z = L
 % end
-z_position = 0.4;
 %Create 3D Lander
 [N_norotation,C_b,C_s,nnodes,n_s,n_b, zl_i] = Lander_3D(q,p,r,L,cyl,C_2,z_position);
 C_sT = C_s'; C_bT = C_b';
@@ -136,7 +138,8 @@ for thetay_i = 1:length(theta_0y)
     for thetax_i = 1:length(theta_0x)
         %% Node position matrix n
         [n,N] = nodematrix(N_norotation,height,nnodes,theta_0x(thetax_i),theta_0y(thetay_i),theta_0z);
-        
+        tenseg_plot( N,C_b,C_s)
+        axis on
         n_0 = n;
         N_0 = N;
         %% Initial velocity dn
