@@ -151,7 +151,7 @@ for q = q_range
     for aa = 1:number_of_orientation
         %% Node position matrix n
         [n,N] = nodematrix(N_norotation,height,nnodes);
-        n_0 = n ;
+        n_0 = n 
         %% Initial velocity dn
         dn = initialvelocity(N,height,v_0,dtheta_0,nnodes);
         %% Define strings matrix s and bars matrix b

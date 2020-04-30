@@ -1,4 +1,4 @@
-function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p, q, RL_ratio, C_2, z_position)
+function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p, q, RL_ratio, C_2, z_position, cyl)
 
 tic
 %% Input parameters
@@ -14,11 +14,14 @@ A_si = (r_si)^2 * pi;
 A_b = (r_b)^2 * pi;
 A_s = [A_ss ; A_si];
 
+node_mass = 0.010;
+
 D = 3;
 I_D = eye(D);
-height = 10;
-v_0 = -5;
+height = 5;
+v_0 = -10;
 m_load = 10;
+
 dtheta_max = 1*pi/180;
 
 Yield_Nylon = 9.4e7;
@@ -42,7 +45,7 @@ g_earth = -9.81;
 % 0.05 m/s for 2500 loops (2 sec).
 dt = 2*10^(-4);
 total_time = 2;
-number_of_loop = total_time/dt
+number_of_loop = total_time/dt;
 V_tol = 0.05;
 Time_stop = 2/dt;
 acceleration_tol = 5000*9.8;
@@ -71,7 +74,6 @@ c_s = 5e06;
 %   ============================================================================================
 %% ==================== node matrix and C_s, C_b ======================
 L = RL_ratio / r;
-cyl = 'POR';
 % 'RCC': right circular cylinder
 % 'SP': sphere
 
@@ -86,30 +88,36 @@ theta_0x = linspace(0,1.57,2);
 %x rotation goes from 0 - pi
 theta_0z = 0;
 
-% switch cyl
-%     case 'SP'
-%         theta_0y = linspace(0,pi,10);
-%         theta_0x = linspace(0,pi,10);
-%         max_z = 2*r  
-%     case 'RCC'
-%         theta_0y = linspace(0,pi,10);
-%         theta_0x = linspace(0,0.349066,5);
-%         max_z = L
-%     case 'POR'
-%          theta_0y = linspace(0,pi,10);
-%         theta_0x = linspace(0,0.349066,5);
-%         max_z = L
-% end
+switch cyl
+    case 'SP'
+        %theta_0y = linspace(0,pi,10);
+        %theta_0x = linspace(0,pi,10);
+        max_z = 2*r;
+    case 'RCC'
+        %theta_0y = linspace(0,pi,10);
+        %theta_0x = linspace(0,0.349066,5);
+        max_z = L;
+    case 'POR'
+        %theta_0y = linspace(0,pi,10);
+        %theta_0x = linspace(0,0.349066,5);
+        max_z = L;
+end
 %Create 3D Lander
 [N_norotation,C_b,C_s,nnodes,n_s,n_b, zl_i] = Lander_3D(q,p,r,L,cyl,C_2,z_position);
 C_sT = C_s'; C_bT = C_b';
 
-
-% if zl_i(end-1) > max_z
-%     mass = 100000;
-%     
-%     return
-% end
+if zl_i(end-1) > max_z
+   mass = 1000;
+   Max_g_of_different_orientation = 1000;
+   sigma_ss_diff_n = 1000;
+   sigma_si_diff_n = 1000;
+   sigma_b_c_diff_n = 1000;
+   sigma_b_t_diff_n = 1000;
+   volume_const = 1;
+   return
+else
+    volume_const = 0;
+end
 
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
@@ -138,8 +146,6 @@ for thetay_i = 1:length(theta_0y)
     for thetax_i = 1:length(theta_0x)
         %% Node position matrix n
         [n,N] = nodematrix(N_norotation,height,nnodes,theta_0x(thetax_i),theta_0y(thetay_i),theta_0z);
-        tenseg_plot( N,C_b,C_s)
-        axis on
         n_0 = n;
         N_0 = N;
         %% Initial velocity dn
@@ -157,7 +163,7 @@ for thetay_i = 1:length(theta_0y)
         db_0 = db;
         %% Mass (Only calculate once)
         if thetay_i == 1
-            [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_load, A_s, A_b);
+            [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_load, A_s, A_b, node_mass);
             invM = inv(M);
         end
         %%  Finding f_g (Only calculate once)
@@ -368,13 +374,23 @@ end
 %% Total Mass
 mass = sum(m,'all');      
 
-figure()
-plot(currenttime,center_node_g/9.8)
-xlabel('time [s]')
-ylabel('Acceleration of the center node [g_earth]')
-    
+%mass_nodes = nnodes * node_mass;
+%mass = mass_internal+mass_nodes;
+Max_g_of_different_orientation = max(max(Max_g_of_different_orientation));
+
+
+% figure()
+% plot(currenttime,center_node_g/9.8)
+% xlabel('time [s]')
+% ylabel('Acceleration of the center node [g_earth]')
+%     
 %re = reshape(Max_g_of_different_orientation,[20,42]);
-    
+sigma_ss_diff_n = max(max(abs(sigma_ss_diff_n)));
+sigma_si_diff_n = max(max(abs(sigma_si_diff_n)));
+sigma_b_c_diff_n = max(max(abs(sigma_b_c_diff_n)));
+sigma_b_t_diff_n = max(max(abs(sigma_b_t_diff_n)));
+
+
 toc
 % 
 % sound(sin(2*pi*25*(1:4000)/100));

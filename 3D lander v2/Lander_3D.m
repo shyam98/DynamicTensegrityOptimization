@@ -335,7 +335,7 @@ set(gca,'FontSize',15);
 %set(gca,'DefaultTextFontSize',24)
 axis equal
 
-n_s = size(CS,1);
+n_s = size(CS,1)
 %% Add the center point
 % Find the points which z position = 0
 sp_point = [];
@@ -352,7 +352,9 @@ N = [N center_node];
 Cb = [CB zeros((2*q+1)*p,1)];
 % Update Cs
 CCC = - eye( 2*p*q+p );
+size(CCC)
 CCC = [ CCC  ones( (2*q+1)*p , 1)];
+size(CCC)
 % for i = 1:size(CCC,1)
 %     if ismember(i,sp_point)
 %         CCC(i,i) = 0;
@@ -360,7 +362,9 @@ CCC = [ CCC  ones( (2*q+1)*p , 1)];
 %     end
 % end
 CCC(all(CCC == 0, 2),:) = [];
+size(CS)
 Cs = [CS  zeros(  size(CS,1) , 1 )];
+size(Cs)
 Cs = [Cs; CCC];
 
 

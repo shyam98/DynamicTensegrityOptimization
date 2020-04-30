@@ -1,4 +1,4 @@
-function [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_load, A_s, A_b)
+function [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_load, A_s, A_b, node_mass)
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -32,6 +32,7 @@ end
 m = 1/2 * abs(C_sT) * m_s + 1/2 * abs(C_bT) * m_b;
 nnodes = size(C_sT);
 m(nnodes(1),1) = m(nnodes(1),1) + m_load;
+m = m + ones(size(m))*node_mass;
 
 m_hat = diag(m);
 M = kron(m_hat,I_D);
