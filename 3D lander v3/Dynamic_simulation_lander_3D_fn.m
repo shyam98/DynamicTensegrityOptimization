@@ -1,4 +1,4 @@
-function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const] = Dynamic_simulation_lander_3D_fn(L, r_ss, r_si, r_b, p, q, RL_Ratio, C_2, z_position, cyl)
+function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p, q, RL_ratio, C_2, z_position, cyl)
 
 tic
 %% Input parameters
@@ -21,8 +21,6 @@ I_D = eye(D);
 height = 5;
 v_0 = -10;
 m_load = 20;
-
-dtheta_max = 1*pi/180;
 
 Yield_Nylon = 9.4e7;
 Yield_Titanium = 1e9;
@@ -73,6 +71,7 @@ c_s = 5e06;
 %   Start dynamic simulation 
 %   ============================================================================================
 %% ==================== node matrix and C_s, C_b ======================
+L = RL_ratio / r;
 % 'RCC': right circular cylinder
 % 'SP': sphere
 
@@ -87,11 +86,29 @@ theta_0x = 0;
 %x rotation goes from 0 - pi
 theta_0z = 0;
 
+switch cyl
+    case 'SP'
+        %theta_0y = linspace(0,pi,10);
+        %theta_0x = linspace(0,pi,10);
+        max_z = 2*r;
+    case 'RCC'
+        %theta_0y = linspace(0,pi,10);
+        %theta_0x = linspace(0,0.349066,5);
+        max_z = L;
+    case 'POR'
+        %theta_0y = linspace(0,pi,10);
+        %theta_0x = linspace(0,0.349066,5);
+        max_z = L;
+end
 %Create 3D Lander
-[N_norotation,C_b,C_s,nnodes,n_s,n_b, n_ss, V_c] = Lander_3D(q,p,L,cyl, C_2, z_position, RL_Ratio);
-C_sT = C_s'; C_bT = C_b';
+[N_norotation,C_b,C_s,nnodes,n_s,n_b, zl_i, n_ss] = Lander_3D(q,p,r,L,cyl,C_2,z_position);
 
-if V_c == 1
+%n_ss = number of surface strings
+n_si = n_s - n_ss;
+
+C_sT = C_s'; C_bT = C_b';
+zl_i(end-1)
+if zl_i(end-1) > (max_z + height)
    mass = 1000;
    Max_g_of_different_orientation = 1000;
    sigma_ss_diff_n = 1000;
@@ -103,8 +120,7 @@ if V_c == 1
 else
     volume_const = 0;
 end
-tenseg_plot(N_norotation, C_b, C_s);
-axis on
+
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
 Max_g_of_different_orientation = zeros(length(theta_0y), length(theta_0x)); % Store Maximum acceleration 
@@ -135,7 +151,7 @@ for thetay_i = 1:length(theta_0y)
         n_0 = n;
         N_0 = N;
         %% Initial velocity dn
-        dn = initialvelocity(N,height,v_0,dtheta_max,nnodes);
+        dn = initialvelocity(N,height,v_0,nnodes);
         dn_0 = dn;
         %% Define strings matrix s and bars matrix b
         %  s and b indicates the length (2D - x and y direction) of each string and each bar
@@ -209,7 +225,7 @@ for thetay_i = 1:length(theta_0y)
             %% External force
             f_e = externalforce(D,nnodes,n,pc,dn,eta,f_g,Cc);
             %% Internal force
-            [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss);
+            [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss);
             %% Keep track of stresses
             sigma_ss_max(loop) = max(sigma_ss_dt);
             sigma_ss_min(loop) = min(sigma_ss_dt);

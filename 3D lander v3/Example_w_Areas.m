@@ -14,7 +14,7 @@ C_2 = 0;
 R3Ddata.Bradius = 0.02*ones(size(Cb,1),1);
 R3Ddata.Sradius = 0.001*ones(size(Cs,1),1);
 
-tenseg_plot( N,Cb,Cs,[],[],[0,90,0])
-%tenseg_plot( N,Cb,Cs,[],[],[20,80,20], [''], R3Ddata)
+%tenseg_plot( N,Cb,Cs)
+tenseg_plot( N,Cb,Cs,[],[],[20,80,20], ['Parabolic'], R3Ddata)
 
 axis on

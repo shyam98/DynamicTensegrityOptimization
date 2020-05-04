@@ -18,7 +18,7 @@ end
 
 p = input('Input bar configuration, default 3 -- p = ');
 if isempty(p)
- p = 3;
+ p = 6;
 end
 
 q = input('Input string configuration, default 4 -- q = ');

@@ -321,7 +321,7 @@ set(gca,'FontSize',15);
 %set(gca,'DefaultTextFontSize',24)
 axis equal
 
-n_s = size(CS,1);
+n_s = size(CS,1)
 %% Add the center point
 % Find the points which z position = 0
 sp_point = [];
@@ -351,7 +351,7 @@ axis off
 view(12,15)
 %% Finding the number of nodes, strings and bars for N, Cs and Cb
 nnodes = size(N,2);
-n_s = size(Cs,1);
+n_s = size(Cs,1)
 n_b = size(Cb,1);
 
 

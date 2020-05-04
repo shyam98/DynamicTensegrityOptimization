@@ -1,13 +1,13 @@
-function [N,Cb,Cs,nnodes,n_s,n_b, n_ss, V_c] = Lander_3D(q,p,L,cyl, C_2, z_position, RL_Ratio)
+function [N,Cb,Cs,nnodes,n_s,n_b, zl_i, n_ss] = Lander_3D(q,p,r,L,cyl, C_2, z_position)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-%Define length by RL ratio
-r = L * RL_Ratio;
-RL_Ratio_sp = RL_Ratio*2; 
+
+
 % TENSEGRITY GEOMETRY TORUS
 % p: Number of side 
 % p: Number of level
 
+%L = 3; 
 
 %cyl = 'SP';
 % 'RCC': right circular cylinder
@@ -38,7 +38,7 @@ N = zeros(3,2*p*q+p);
 %
 c = 1; % counter
 
-V_c = 0;
+
 
 for i =0:q
     for k = 0:p-1
@@ -54,7 +54,7 @@ for i =0:q
             zl_i(i+1) = zl;
             zlv = [0;0;zl];
             tetl = (2*k + l)*pi/p;
-                      
+            
             switch cyl
                 case 'RCC' % 'RCC': right circular cylinder
                     ar = r;
@@ -65,13 +65,13 @@ for i =0:q
                 case 'POR' % 'POR': paraboloid of revolution
                     %ar = (4*a*(Ld - zl))^(1/2);
                     %br = (4*a*(Ld - zl))^(1/2);
-                    ar = RL_Ratio*(4*a*(Ld - (-zl + L)))^(1/2);
-                    br = RL_Ratio*(4*a*(Ld - (-zl + L)))^(1/2);
+                    ar = (4*a*(Ld - (-zl + L)))^(1/2);
+                    br = (4*a*(Ld - (-zl + L)))^(1/2);
                     center_node = [0;0;z_position*L];
                 case 'SP' % 'SP': sphere
-                    ar = (Rd^2 - (zl-L/2)^2)^(1/2)*RL_Ratio_sp;
-                    br = (Rd^2 - (zl-L/2)^2)^(1/2)*RL_Ratio_sp;
-                    center_node = [0;0;z_position*L];
+                    ar = (Rd^2 - (zl-L/2)^2)^(1/2);
+                    br = (Rd^2 - (zl-L/2)^2)^(1/2);
+                    center_node = [0;0;z_position*r];
                 otherwise
                     disp('Wrong shape input')
                     disp('Exiting')
@@ -89,20 +89,6 @@ for i =0:q
             end
         end
     end
-end
-%Check for constraint
-
-if (zl_i(end-1) > L) || (zl_i(1) < 0)
-    N = 0;
-    Cb = 0;
-    Cs =  0;
-    nnodes = 0;
-    n_s = 0;
-    n_b = 0;
-    zl_i = 0;
-    n_ss = 0;
-    V_c = 1;
-    return
 end
 N(3,:) = N(3,:) - L/2;
 
@@ -124,7 +110,6 @@ for i = 1:2*p*q+p
         end
     end
 end
-
 
 xlabel('x'); ylabel('y'); zlabel('z');
 %grid on
@@ -368,7 +353,9 @@ N = [N center_node];
 Cb = [CB zeros((2*q+1)*p,1)];
 % Update Cs
 CCC = - eye( 2*p*q+p );
+size(CCC)
 CCC = [ CCC  ones( (2*q+1)*p , 1)];
+size(CCC)
 % for i = 1:size(CCC,1)
 %     if ismember(i,sp_point)
 %         CCC(i,i) = 0;
@@ -376,7 +363,9 @@ CCC = [ CCC  ones( (2*q+1)*p , 1)];
 %     end
 % end
 CCC(all(CCC == 0, 2),:) = [];
+size(CS)
 Cs = [CS  zeros(  size(CS,1) , 1 )];
+size(Cs)
 Cs = [Cs; CCC];
 
 
@@ -384,7 +373,7 @@ axis off
 view(12,15)
 %% Finding the number of nodes, strings and bars for N, Cs and Cb
 nnodes = size(N,2);
-n_s = size(Cs,1);
+n_s = size(Cs,1)
 n_b = size(Cb,1);
 
 

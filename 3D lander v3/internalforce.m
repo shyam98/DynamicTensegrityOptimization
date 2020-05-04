@@ -1,4 +1,4 @@
-function [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss, sigma_si, sigma_ss_diff, sigma_si_diff, sigma_b_c_diff, sigma_b_t_diff] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss)
+function [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss, sigma_si, sigma_ss_diff, sigma_si_diff, sigma_b_c_diff, sigma_b_t_diff] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 
