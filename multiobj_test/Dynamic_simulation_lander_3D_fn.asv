@@ -1,4 +1,4 @@
-function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const] = Dynamic_simulation_lander_3D_fn(r, r_ss, r_si, r_b, p, q, RL_ratio, C_2, z_position, cyl)
+function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const] = Dynamic_simulation_lander_3D_fn(L, r_ss, r_si, r_b, p, q, RL_Ratio, C_2, z_position, cyl)
 
 tic
 %% Input parameters
@@ -18,7 +18,7 @@ node_mass = 0.010;
 
 D = 3;
 I_D = eye(D);
-height = 5;
+height = 1.01;
 v_0 = -10;
 m_load = 20;
 
@@ -44,7 +44,7 @@ g_earth = -9.81;
 % is assume to stop when the average speed of all nodes remains below 
 % 0.05 m/s for 2500 loops (2 sec).
 dt = 1*10^(-4);
-total_time = 2;
+total_time = 1;
 number_of_loop = total_time/dt;
 V_tol = 0.05;
 Time_stop = 2/dt;
@@ -73,7 +73,6 @@ c_s = 5e06;
 %   Start dynamic simulation 
 %   ============================================================================================
 %% ==================== node matrix and C_s, C_b ======================
-L = RL_ratio / r;
 % 'RCC': right circular cylinder
 % 'SP': sphere
 
@@ -81,44 +80,31 @@ L = RL_ratio / r;
 %Cylinders
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - .222*pi (20d)
-theta_0y = 0;
-theta_0x = 0;
+theta_0y = 0:pi/6:pi/2;
+theta_0x = 0:pi/18:pi/9;
 %Spheres
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - pi
 theta_0z = 0;
 
-switch cyl
-    case 'SP'
-        %theta_0y = linspace(0,pi,10);
-        %theta_0x = linspace(0,pi/2,10);
-        max_z = 2*r;
-    case 'RCC'
-        %theta_0y = linspace(0,pi,10);
-        %theta_0x = linspace(0,0.349066,5);
-        max_z = L;
-    case 'POR'
-        %theta_0y = linspace(0,pi,10);
-        %theta_0x = linspace(0,0.349066,5);
-        max_z = L;
-end
 %Create 3D Lander
-[N_norotation,C_b,C_s,nnodes,n_s,n_b, zl_i] = Lander_3D(q,p,r,L,cyl,C_2,z_position);
+[N_norotation,C_b,C_s,nnodes,n_s,n_b, n_ss, V_c] = Lander_3D(q,p,L,cyl, C_2, z_position, RL_Ratio);
 C_sT = C_s'; C_bT = C_b';
 
-% if zl_i(end-1) > max_z
-%    mass = 1000;
-%    Max_g_of_different_orientation = 1000;
-%    sigma_ss_diff_n = 1000;
-%    sigma_si_diff_n = 1000;
-%    sigma_b_c_diff_n = 1000;
-%    sigma_b_t_diff_n = 1000;
-%    volume_const = 1;
-%    return
-% else
-%     volume_const = 0;
-% end
-
+if V_c ~= 0
+   mass = 1000;
+   Max_g_of_different_orientation = 1000;
+   sigma_ss_diff_n = 1e6;
+   sigma_si_diff_n = 1e6;
+   sigma_b_c_diff_n = 1e6;
+   sigma_b_t_diff_n = 1e6;
+   volume_const = V_c;
+   return
+else
+    volume_const = 0;
+end
+tenseg_plot(N_norotation, C_b, C_s);
+axis on
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
 Max_g_of_different_orientation = zeros(length(theta_0y), length(theta_0x)); % Store Maximum acceleration 
@@ -145,7 +131,8 @@ for thetay_i = 1:length(theta_0y)
     %% Iterate about the x-axis
     for thetax_i = 1:length(theta_0x)
         %% Node position matrix n
-        [n,N] = nodematrix(N_norotation,height,nnodes,theta_0x(thetax_i),theta_0y(thetay_i),theta_0z);
+        [n,N] = nodematrix(N_norotation,height,nnodes,theta_0x(thetax_i),theta_0y(thetay_i),theta_0z, L);
+        tenseg_plot(N,C_s,C_b)
         n_0 = n;
         N_0 = N;
         %% Initial velocity dn
@@ -163,7 +150,7 @@ for thetay_i = 1:length(theta_0y)
         db_0 = db;
         %% Mass (Only calculate once)
         if thetay_i == 1
-            [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_load, A_s, A_b, node_mass);
+            [M,m] = Mass(D,I_D,n_s,n_b,s,b,C_sT,C_bT,rho_s,rho_b,m_load, A_s, A_b, node_mass, n_ss);
             invM = inv(M);
         end
         %%  Finding f_g (Only calculate once)
@@ -223,7 +210,7 @@ for thetay_i = 1:length(theta_0y)
             %% External force
             f_e = externalforce(D,nnodes,n,pc,dn,eta,f_g,Cc);
             %% Internal force
-            [f_I,varepsilon_s,sigma_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss, sigma_si, sigma_ss_diff, sigma_si_diff, sigma_b_c_diff, sigma_b_t_diff] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss)
+            [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss);
             %% Keep track of stresses
             sigma_ss_max(loop) = max(sigma_ss_dt);
             sigma_ss_min(loop) = min(sigma_ss_dt);

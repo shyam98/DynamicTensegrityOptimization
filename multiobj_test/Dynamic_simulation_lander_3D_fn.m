@@ -18,7 +18,7 @@ node_mass = 0.010;
 
 D = 3;
 I_D = eye(D);
-height = 5;
+height = 1.01;
 v_0 = -10;
 m_load = 20;
 
@@ -44,7 +44,7 @@ g_earth = -9.81;
 % is assume to stop when the average speed of all nodes remains below 
 % 0.05 m/s for 2500 loops (2 sec).
 dt = 1*10^(-4);
-total_time = 2;
+total_time = 1;
 number_of_loop = total_time/dt;
 V_tol = 0.05;
 Time_stop = 2/dt;
@@ -80,8 +80,8 @@ c_s = 5e06;
 %Cylinders
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - .222*pi (20d)
-theta_0y = 0;
-theta_0x = 0;
+theta_0y = 0:pi/6:pi/2;
+theta_0x = 0:pi/18:pi/9;
 %Spheres
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - pi
@@ -91,14 +91,14 @@ theta_0z = 0;
 [N_norotation,C_b,C_s,nnodes,n_s,n_b, n_ss, V_c] = Lander_3D(q,p,L,cyl, C_2, z_position, RL_Ratio);
 C_sT = C_s'; C_bT = C_b';
 
-if V_c == 1
+if V_c ~= 0
    mass = 1000;
-   Max_g_of_different_orientation = 1000;
-   sigma_ss_diff_n = 1000;
-   sigma_si_diff_n = 1000;
-   sigma_b_c_diff_n = 1000;
-   sigma_b_t_diff_n = 1000;
-   volume_const = 1;
+   Max_g_of_different_orientation = 100;
+   sigma_ss_diff_n = 1e6;
+   sigma_si_diff_n = 1e6;
+   sigma_b_c_diff_n = 1e6;
+   sigma_b_t_diff_n = 1e6;
+   volume_const = V_c;
    return
 else
     volume_const = 0;
@@ -131,7 +131,8 @@ for thetay_i = 1:length(theta_0y)
     %% Iterate about the x-axis
     for thetax_i = 1:length(theta_0x)
         %% Node position matrix n
-        [n,N] = nodematrix(N_norotation,height,nnodes,theta_0x(thetax_i),theta_0y(thetay_i),theta_0z);
+        [n,N] = nodematrix(N_norotation,height,nnodes,theta_0x(thetax_i),theta_0y(thetay_i),theta_0z, L);
+        tenseg_plot(N,C_s,C_b)
         n_0 = n;
         N_0 = N;
         %% Initial velocity dn

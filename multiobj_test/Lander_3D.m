@@ -91,7 +91,6 @@ for i =0:q
     end
 end
 %Check for constraint
-
 if (zl_i(end-1) > L) || (zl_i(1) < 0)
     N = 0;
     Cb = 0;
@@ -99,9 +98,8 @@ if (zl_i(end-1) > L) || (zl_i(1) < 0)
     nnodes = 0;
     n_s = 0;
     n_b = 0;
-    zl_i = 0;
     n_ss = 0;
-    V_c = 1;
+    V_c = abs(zl_i(end-1)-L)+abs(zl_i(1));
     return
 end
 N(3,:) = N(3,:) - L/2;

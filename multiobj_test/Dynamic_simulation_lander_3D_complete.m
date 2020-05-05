@@ -7,7 +7,7 @@ q = 4;
 
 L = 1;
 RL_ratio = 0.5;
-C_2 = 0.1;
+C_2 = 1;
 z_position = 0;
 cyl = 'SP';
 

@@ -1,4 +1,4 @@
-function [n,N,theta_0x,theta_0y,theta_0z] = nodematrix(N_norotation,height,nnodes, theta_0x, theta_0y, theta_0z)
+function [n,N,theta_0x,theta_0y,theta_0z] = nodematrix(N_norotation,height,nnodes, theta_0x, theta_0y, theta_0z, L)
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 % nodes position matrix n
@@ -21,7 +21,7 @@ function [n,N,theta_0x,theta_0y,theta_0z] = nodematrix(N_norotation,height,nnode
            sin(theta_0z)     cos(theta_0z)     0
            0                      0            1 ];
     
-    heightmatrix = repmat([0;height;0],1,nnodes);
+    heightmatrix = repmat([0;height+(L/2);0],1,nnodes);
     N = heightmatrix + Rx*Ry*Rz*N_norotation;
     
     n = [];
