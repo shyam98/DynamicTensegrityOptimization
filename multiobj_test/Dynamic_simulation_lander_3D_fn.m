@@ -43,7 +43,7 @@ g_earth = -9.81;
 % "Time_stop" loops, we assume the lander stops. In this case, the lander
 % is assume to stop when the average speed of all nodes remains below 
 % 0.05 m/s for 2500 loops (2 sec).
-dt = 1*10^(-4);
+dt = 0.1*10^(-4);
 total_time = 1;
 number_of_loop = total_time/dt;
 V_tol = 0.05;
