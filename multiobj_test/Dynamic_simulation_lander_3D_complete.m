@@ -1,13 +1,13 @@
 clc; clear; close all;
-r_ss = 0.05;
-r_si = 0.01;
-r_b = 0.02;
+r_ss = 0.0025;
+r_si = 0.0025;
+r_b = 0.005;
 p = 4;
 q = 4;
 
-L = 1;
+L = 0.5;
 RL_ratio = 0.5;
-C_2 = 1;
+C_2 = 0;
 z_position = 0;
 cyl = 'SP';
 
