@@ -8,6 +8,12 @@ tic
 % m_s_total = Total mass of strings ; m_b_total = Total mass of bars
 % v_0 = Initial vertical speed
 
+
+
+
+
+%%
+
 %Calculate Areas from Radius Input
 A_ss = (r_ss)^2 * pi;
 A_si = (r_si)^2 * pi;
@@ -43,8 +49,8 @@ g_earth = -9.81;
 % "Time_stop" loops, we assume the lander stops. In this case, the lander
 % is assume to stop when the average speed of all nodes remains below
 % 0.05 m/s for 2500 loops (2 sec).
-dt = (0.1*10^(-4))/0.8;
-total_time = 0.8;
+dt = (0.2*10^(-4));
+total_time = 0.4;
 number_of_loop = total_time/dt;
 number_of_loop = ceil(number_of_loop)
 V_tol = 0.05;
@@ -82,7 +88,7 @@ c_s = 5e06;
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - .222*pi (20d)
 theta_0y = 0;
-theta_0x = pi/6;
+theta_0x = 0;
 %Spheres
 %y rotation goes from 0 - pi
 %x rotation goes from 0 - pi
@@ -106,6 +112,10 @@ else
 end
 tenseg_plot(N_norotation, C_b, C_s);
 axis on
+
+%% GIF OUTPUT PARAMETERS
+R3Ddata.Bradius = r_b*ones(size(C_b,1),1);  
+R3Ddata.Sradius = r_ss*ones(size(C_s,1),1);
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
 Max_g_of_different_orientation = zeros(length(theta_0y), length(theta_0x)); % Store Maximum acceleration
@@ -229,7 +239,7 @@ for thetay_i = 1:length(theta_0y)
             
             %% Plotting an arbitrary number of lander configurations throughout the time frame
             
-            figure(2);
+            figure(3);
             if ismember(loop,X) == 1
                 tenseg_plot(N,C_b,C_s);
                 hold on
@@ -392,7 +402,7 @@ for thetay_i = 1:length(theta_0y)
             fig = figure(idx+1);
             fill3([-30 30 30 -30],[0 0 0 0],[-30 -30 30 30],[0 0 0],'facealpha',0.3)
             hold on
-            tenseg_plot_gif(cell{idx},C_b,C_s);
+            tenseg_plot_gif(cell{idx},C_b,C_s,[],[],[], [], R3Ddata);
             set(fig, 'Position',  [600, 10, 1150, 1000])
             set(fig,'color',[1 1 1])
             xLabel = strcat('x',32,'[m]');
