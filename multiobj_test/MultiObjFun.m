@@ -15,7 +15,7 @@ z_position = x(8);
 
 %MISC
 RL_ratio = x(9);
-cyl = x(10);
+cyl = 'RCC';
 
 %Call Function
 [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const] = Dynamic_simulation_lander_3D_fn(L, r_ss, r_si, r_b, p, q, RL_ratio, C_2, z_position, cyl);
