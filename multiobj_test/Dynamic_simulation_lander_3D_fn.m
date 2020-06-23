@@ -8,10 +8,6 @@ tic
 % m_s_total = Total mass of strings ; m_b_total = Total mass of bars
 % v_0 = Initial vertical speed
 
-
-
-
-
 %%
 
 %Calculate Areas from Radius Input
@@ -203,6 +199,9 @@ for thetay_i = 1:length(theta_0y)
         sigma_si_diff = zeros(number_of_loop,1);
         sigma_b_c_diff = zeros(number_of_loop,1);
         sigma_b_t_diff = zeros(number_of_loop,1);
+        %% Bottom Node Position
+        n_bottom_track = zeros(number_of_loop,1);
+        
         %% Initializing maximum and minimum value of x,y,z position
         % They are the maximum of minimum valve for every loops
         % They are used to confine the range of axis if we plot diagrams.
@@ -213,11 +212,14 @@ for thetay_i = 1:length(theta_0y)
         ii = 1;
         %% ====== Start simulation for each orientation =========
         for loop = 1:number_of_loop
+            %% keep track of bottom Node 
+            n_bottom_track(loop) = N(2,1);
+            
+            %{
             if loop == number_of_loop/10
                 tenseg_plot(N,C_s,C_b)
             end
-            
-            
+            %}
             
             %% Finding trajectory matrices of arbitrary nodes
             
@@ -399,7 +401,7 @@ for thetay_i = 1:length(theta_0y)
             break
         end
         %% Output frames to make gif -- imwrite
-        
+        %{
         nImages = length(cell);
         
         for idx = 1:nImages
@@ -437,7 +439,7 @@ for thetay_i = 1:length(theta_0y)
                 imwrite(A,map,filename,'gif','WriteMode','append','DelayTime',0.06);
             end
         end
-        
+        %}
         
     end
 end
