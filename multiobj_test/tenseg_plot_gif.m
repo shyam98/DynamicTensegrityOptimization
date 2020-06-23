@@ -43,10 +43,12 @@ FractionDistance = 0.005; % Distance between object and label (relative to overa
 
 %% 3D plot options
 nsurfpatches = 6; % Number of surface patches in 3D plots
-BarSurfColor = [0.2, 0.2, 0.6];
+%BarSurfColor = [0.2, 0.2, 0.6];
 %StringSurfColor = [0.9, 0.1, 0.1];
-StringSurfColor = [1, 0.0, 0.0];
-LightAmbientStrength = 0.7;% [0,1], 0.3 is Matlab's default
+%StringSurfColor = [1, 0.0, 0.0];
+BarSurfColor = [0.1, 0.1, 0.4];
+StringSurfColor = [0.9, 0.3, 0.3];
+LightAmbientStrength = 0.9;% [0,1], 0.3 is Matlab's default
 
 %%
 switch nargin

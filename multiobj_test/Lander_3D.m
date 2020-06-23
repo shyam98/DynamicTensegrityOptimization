@@ -105,28 +105,28 @@ end
 N(3,:) = N(3,:) - L/2;
 
 %
-%
-figure(1)
-hold on
-l = 1;
-for i = 1:2*p*q+p
-    if i > 2*p*q
-        plot3(N(1,i),N(2,i),N(3,i),'ok','LineWidth',1,'MarkerSize',4)
-    else
-        if l == 1
-            l = 2;
-            plot3(N(1,i),N(2,i),N(3,i),'ok','LineWidth',0.5,'MarkerSize',4)
-        else
-            l = 1;
-            plot3(N(1,i),N(2,i),N(3,i),'sk','LineWidth',0.5,'MarkerSize',4)
-        end
-    end
-end
-
-
-xlabel('x'); ylabel('y'); zlabel('z');
-%grid on
-view(az, el);
+% 
+% figure(1)
+% hold on
+% l = 1;
+% for i = 1:2*p*q+p
+%     if i > 2*p*q
+%         plot3(N(1,i),N(2,i),N(3,i),'ok','LineWidth',1,'MarkerSize',4)
+%     else
+%         if l == 1
+%             l = 2;
+%             plot3(N(1,i),N(2,i),N(3,i),'ok','LineWidth',0.5,'MarkerSize',4)
+%         else
+%             l = 1;
+%             plot3(N(1,i),N(2,i),N(3,i),'sk','LineWidth',0.5,'MarkerSize',4)
+%         end
+%     end
+% end
+% 
+% 
+% xlabel('x'); ylabel('y'); zlabel('z');
+% grid on
+% view(az, el);
 
 
 %
@@ -379,7 +379,7 @@ Cs = [Cs; CCC];
 
 
 axis off
-view(12,15)
+%view(12,15)
 %% Finding the number of nodes, strings and bars for N, Cs and Cb
 nnodes = size(N,2);
 n_s = size(Cs,1);

@@ -50,7 +50,7 @@ g_earth = -9.81;
 % is assume to stop when the average speed of all nodes remains below
 % 0.05 m/s for 2500 loops (2 sec).
 dt = (0.2*10^(-4));
-total_time = 0.4;
+total_time = 0.6;
 number_of_loop = total_time/dt;
 number_of_loop = ceil(number_of_loop);
 V_tol = 0.05;
@@ -98,6 +98,7 @@ theta_0z = 0;
 [N_norotation,C_b,C_s,nnodes,n_s,n_b, n_ss, V_c] = Lander_3D(q,p,L,cyl, C_2, z_position, RL_Ratio);
 C_sT = C_s'; C_bT = C_b';
 
+
 if V_c ~= 0
     mass = 1000;
     Max_g_of_different_orientation = 100;
@@ -114,8 +115,11 @@ end
 axis on
 
 %% GIF OUTPUT PARAMETERS
+central_node_r = 0.015;
+lander_node_r = 0.008;
 R3Ddata.Bradius = r_b*ones(size(C_b,1),1);  
 R3Ddata.Sradius = r_ss*ones(size(C_s,1),1);
+R3Ddata.Nradius = [ones((nnodes-1),1)*lander_node_r ; central_node_r];
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
 Max_g_of_different_orientation = zeros(length(theta_0y), length(theta_0x)); % Store Maximum acceleration
@@ -238,16 +242,16 @@ for thetay_i = 1:length(theta_0y)
             
             
             %% Plotting an arbitrary number of lander configurations throughout the time frame
-%             
-%             figure(3);
-%             if ismember(loop,X) == 1
-%                 tenseg_plot(N,C_b,C_s);
-%                 hold on
-%                 axis off
-%                 ttext = string(find(X==loop));
-%                 %text(N(1,1),N(2,1),ttext,'fontsize',15);
-%                 hold on
-%             end
+            
+            figure(3);
+            if ismember(loop,X) == 1
+                tenseg_plot(N,C_b,C_s);
+                hold on
+                axis off
+                ttext = string(find(X==loop));
+                %text(N(1,1),N(2,1),ttext,'fontsize',15);
+                hold on
+            end
             
             
             %% External force
@@ -395,40 +399,44 @@ for thetay_i = 1:length(theta_0y)
             break
         end
         %% Output frames to make gif -- imwrite
-%         
-%         nImages = length(cell);
-%         
-%         for idx = 1:nImages
-%             fig = figure(idx+1);
-%             fill3([-30 30 30 -30],[0 0 0 0],[-30 -30 30 30],[0 0 0],'facealpha',0.3)
-%             hold on
-%             tenseg_plot_gif(cell{idx},C_b,C_s,[],[],[], [], R3Ddata);
-%             set(fig, 'Position',  [600, 10, 1150, 1000])
-%             set(fig,'color',[1 1 1])
-%             xLabel = strcat('x',32,'[m]');
-%             yLabel = strcat('y',32,'[m]');
-%             xlabel(xLabel,'fontsize',28,'interpreter','latex')
-%             ylabel(yLabel,'fontsize',28,'interpreter','latex')
-%             set(gca,'FontSize',28,'TickLabelInterpreter','latex')
-%             axis([min(Xmin) max(Xmax) min(Ymin) max(Ymax) min(Zmin) max(Zmax)])
-%             drawnow
-%             set(fig,'visible','off')
-%             
-%             frame = getframe(fig);
-%             im{idx} = frame2im(frame);
-%             ax.Units = 'normalized';
-%         end
-%         close;
-%         
-%         filename = 'gif3D.gif'; % Specify the output file name
-%         for idx = 1:nImages
-%             [A,map] = rgb2ind(im{idx},256);
-%             if idx == 1
-%                 imwrite(A,map,filename,'gif','LoopCount',Inf,'DelayTime',0.06);
-%             else
-%                 imwrite(A,map,filename,'gif','WriteMode','append','DelayTime',0.06);
-%             end
-%         end
+        
+        nImages = length(cell);
+        
+        for idx = 1:nImages
+            fig = figure(idx+1);
+            fill3([-30 30 30 -30],[0 0 0 0],[-30 -30 30 30],[0 0 0],'facealpha',0.3)
+            hold on
+            tenseg_plot_gif(cell{idx},C_b,C_s,[],[],[80, 45, 45], [], R3Ddata);
+            set(fig, 'Position',  [600, 10, 1150, 1000])
+            set(fig,'color',[1 1 1])
+            xLabel = strcat('x',32,'[m]');
+            yLabel = strcat('y',32,'[m]');
+            zLabel = strcat('z',32,'[m]');
+            xlabel(xLabel,'fontsize',28,'interpreter','latex')
+            ylabel(yLabel,'fontsize',28,'interpreter','latex')
+            zlabel(zLabel,'fontsize',28,'interpreter','latex')
+            set(gca,'FontSize',28,'TickLabelInterpreter','latex')
+            axis([min(Xmin) max(Xmax) min(Ymin) max(Ymax) min(Zmin) max(Zmax)])
+            drawnow
+            set(fig,'visible','off')
+            view(62.2344, 25.3369);
+            cameratoolbar('SetCoordSys','y');
+            
+            frame = getframe(fig);
+            im{idx} = frame2im(frame);
+            ax.Units = 'normalized';
+        end
+        close;
+        
+        filename = 'gif3D.gif'; % Specify the output file name
+        for idx = 1:nImages
+            [A,map] = rgb2ind(im{idx},256);
+            if idx == 1
+                imwrite(A,map,filename,'gif','LoopCount',Inf,'DelayTime',0.06);
+            else
+                imwrite(A,map,filename,'gif','WriteMode','append','DelayTime',0.06);
+            end
+        end
         
         
     end

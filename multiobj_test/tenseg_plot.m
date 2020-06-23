@@ -43,9 +43,11 @@ FractionDistance = 0.005; % Distance between object and label (relative to overa
 
 %% 3D plot options
 nsurfpatches = 6; % Number of surface patches in 3D plots
-BarSurfColor = [0.2, 0.2, 0.6];
-StringSurfColor = [0, 1, 0];
-%StringSurfColor = [0, 0.0, 0.0];
+%BarSurfColor = [0.2, 0.2, 0.6];
+StringSurfColor = [1, 0.3, 0.3];
+%StringSurfColor = [1, 0.0, 0.0];
+BarSurfColor = [0.1, 0.1, 0.4];
+%BarSurfColor = [0, 51/255, 153/255];
 LightAmbientStrength = 0.9;% [0,1], 0.3 is Matlab's default
 
 %%
@@ -241,11 +243,11 @@ end
 % Modify plot display
 grid off
 axis equal
-if isempty(view_vec)
-    [~, view_vec_derived] = tenseg_axisview(N,R3Ddata);
-    view_vec = view_vec_derived;
-end
-view(view_vec)
+% if isempty(view_vec)
+%     [~, view_vec_derived] = tenseg_axisview(N,R3Ddata);
+%     view_vec = view_vec_derived;
+%end
+%view(view_vec)
 
 xlabel('x')
 ylabel('y')
