@@ -227,16 +227,20 @@ l=1;
 for i = 1:size(B,2)
     if l == 1
         l = 2;
+        %{
         plot3([Bm1(1,i),Bp1(1,i)], ...
             [Bm1(2,i),Bp1(2,i)], ...
             [Bm1(3,i),Bp1(3,i)],...
             'b','LineWidth',1.75)
+        %}
     else
         l = 1;
-        plot3([Bm1(1,i),Bp1(1,i)], ...
+        %{
+            plot3([Bm1(1,i),Bp1(1,i)], ...
             [Bm1(2,i),Bp1(2,i)], ...
             [Bm1(3,i),Bp1(3,i)],...
-            'b','LineWidth',1.75)
+            'b','LineWidth',1.75)\
+        %}
     end
 
 end
@@ -334,10 +338,12 @@ Sp1 = N*CSp1';
 
 %PLOTTING STRINGS
 for i = 1:size(S,2)
+    %{
     plot3([Sm1(1,i),Sp1(1,i)], ...
         [Sm1(2,i),Sp1(2,i)], ...
         [Sm1(3,i),Sp1(3,i)],...
         'r','LineWidth',1.05)
+    %}
 end
 
 
@@ -377,6 +383,7 @@ CCC(all(CCC == 0, 2),:) = [];
 Cs = [CS  zeros(  size(CS,1) , 1 )];
 Cs = [Cs; CCC];
 
+%Cs = [CCC];
 
 axis off
 %view(12,15)

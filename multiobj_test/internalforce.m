@@ -1,7 +1,10 @@
-function [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss, sigma_si, sigma_ss_diff, sigma_si_diff, sigma_b_c_diff, sigma_b_t_diff] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss)
+function [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss, sigma_si, sigma_ss_diff, sigma_si_diff, sigma_b_c_diff, sigma_b_t_diff] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss, FoS)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 
+ %  ----------------------- Factor of Saftey ------------------------------
+String_Yield = Yield_Nylon / FoS;
+Bar_Yield = Yield_Titanium / FoS;
  %  ----------------------- Strings force ------------------------------
     % Finding initial length matrix and current length matrix (both are n_s*1 matrix)
     s_initiallength = [];
@@ -23,7 +26,12 @@ function [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength,
     % sigma_s matrix ( n_s*1 )
     sigma_s = [];
     for i = 1:n_s
-        sigma_s = [sigma_s; E_s*varepsilon_s(i) + c_s*d_varepsilon_s(i) ];
+        string_buckle_check = E_s*varepsilon_s(i) + c_s*d_varepsilon_s(i);
+        if string_buckle_check < 0 
+            sigma_s = [sigma_s; 0]; 
+        else
+            sigma_s = [sigma_s; string_buckle_check];
+        end
     end
     % Separate sigma into surface and internal stresses
     sigma_ss = sigma_s(1:(n_ss),:);
@@ -44,7 +52,7 @@ function [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength,
     
     %  ------------------------ String Stress --------------------------------
    %Calculate the difference between string stress and yield stress
-   sigma_s_diff = sigma_s - Yield_Nylon;
+   sigma_s_diff = sigma_s - String_Yield;
    sigma_s_check = sigma_s_diff > 0;
    %Get rid of all values of simga_s that are in range
    sigma_s_diff = sigma_s_diff.*sigma_s_check;
@@ -99,7 +107,7 @@ function [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength,
     %Tensile stresses for yield
    tensile_sigma_b = sigma_b > 0; % Get rid of compressive values
    tensile_sigma_b = sigma_b.*tensile_sigma_b;
-   sigma_b_t_diff = tensile_sigma_b - Yield_Titanium;
+   sigma_b_t_diff = tensile_sigma_b - Bar_Yield;
    sigma_b_t_check = sigma_b_t_diff > 0;
    sigma_b_t_diff = sigma_b_t_diff.*sigma_b_t_check;
  

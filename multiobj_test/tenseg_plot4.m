@@ -25,10 +25,10 @@ function [fig_out] = tenseg_plot4( N,C_b,C_s,fig_handle,highlight_nodes,view_vec
 % Handle optional arguments
 
 %% Object size options (for line plots)
-BarWidth = 1.5; % Width of bar lines
-StringWidth = 1.0; % Width of string lines
+BarWidth = 2.4; % Width of bar lines
+StringWidth = 0.1; % Width of string lines
 NodeSize = 12; % Size of node marker
-
+CentralNodeSize = 12; %Size of central node
 
 
 %% Labeling options
@@ -49,7 +49,7 @@ BarSurfColor = [0.2, 0.2, 0.6];
 %BarSurfColor = [0.1, 0.1, 0.1];
 StringSurfColor = [0.9, 0.1, 0.1];
 %StringSurfColor = [1, 0.0, 0.0];
-LightAmbientStrength = 0.7;% [0,1], 0.3 is Matlab's default
+LightAmbientStrength = 0.84;% [0,1], 0.3 is Matlab's default
 
 
 % Creates a gradient on colors based on the z-position between Color 1 and Color 2
@@ -58,7 +58,7 @@ StringSurfColor2 = [1, 0.1, 0.1];
 BarSurfColor1 = [0, 0, 0.15];
 BarSurfColor2 = [0, 0, 1];
 NodeColor1 = [0.15,0.15,0.15];
-NodeColor2 = [0.7,0.7,0.7];
+NodeColor2 = [0,0,0];
 %%
 switch nargin
     case 5
@@ -202,10 +202,12 @@ if ~isempty(C_s)
             MyMinVal = min(N(3,:)); MyMaxVal = max(N(3,:)); 
             eta = (0.5*(string_start_nodes(3,j)+string_end_nodes(3,j)) - MyMinVal)/(MyMaxVal-MyMinVal);
             MyColor = StringSurfColor1 + eta*(StringSurfColor2 - StringSurfColor1);
+        %{
         plot3([string_start_nodes(1,j),string_end_nodes(1,j)],...
             [string_start_nodes(2,j),string_end_nodes(2,j)],...
             [string_start_nodes(3,j),string_end_nodes(3,j)],...
             'Color',MyColor,'LineWidth',StringWidth);
+%} 
         hold on
         end
         hold on
@@ -240,7 +242,11 @@ else % Normal plot
         MyMinVal = min(N(3,:)); MyMaxVal = max(N(3,:));
         eta = (N(3,i) - MyMinVal)/(MyMaxVal-MyMinVal);
         MyColor = NodeColor1 + eta*(NodeColor2 - NodeColor1);
-        plot3(N(1,i),N(2,i),N(3,i),'.','MarkerFaceColor',MyColor,'MarkerEdgeColor',MyColor,'MarkerSize',NodeSize)
+        if i == size(N,2)
+            %plot3(N(1,i),N(2,i),N(3,i),'.','MarkerFaceColor',MyColor,'MarkerEdgeColor',MyColor,'MarkerSize',CentralNodeSize)
+        else
+            plot3(N(1,i),N(2,i),N(3,i),'.','MarkerFaceColor',MyColor,'MarkerEdgeColor',MyColor,'MarkerSize',NodeSize)
+        end
     end
 end
 

@@ -1,4 +1,4 @@
-function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const] = Dynamic_simulation_lander_3D_fn(L, r_ss, r_si, r_b, p, q, RL_Ratio, C_2, z_position, cyl)
+function [mass, Max_g_of_different_orientation, sigma_ss_diff_n, sigma_si_diff_n, sigma_b_c_diff_n, sigma_b_t_diff_n, volume_const, node_flip, number_of_loop, n_bottom_min_track, n_bottom_max_track] = Dynamic_simulation_lander_3D_fn(L, r_ss, r_si, r_b, p, q, RL_Ratio, C_2, z_position, cyl)
 close all;
 tic
 %% Input parameters
@@ -22,13 +22,14 @@ D = 3;
 I_D = eye(D);
 height = 1.01;
 v_0 = -10;
-m_load = 20;
+m_load = 10;
 
 dtheta_max = 1*pi/180;
 
 Yield_Nylon = 9.4e7;
 Yield_Titanium = 1e9;
 Youngs_Titanium = 115e9;
+FoS = 1.2;
 
 % ======================= Environment Properties ==========================
 % pc = ground bounce constant; Cc = ground damping coefficient
@@ -52,6 +53,8 @@ number_of_loop = ceil(number_of_loop);
 V_tol = 0.05;
 Time_stop = 2/dt;
 acceleration_tol = 5000*9.8;
+
+node_flip = 0;
 
 %% ======================== Materials properties ===========================
 % --------------------- bars -----------------------
@@ -94,6 +97,8 @@ theta_0z = 0;
 [N_norotation,C_b,C_s,nnodes,n_s,n_b, n_ss, V_c] = Lander_3D(q,p,L,cyl, C_2, z_position, RL_Ratio);
 C_sT = C_s'; C_bT = C_b';
 
+%C_sT = sparse(C_s');
+%C_bT = sparse(C_b');
 
 if V_c ~= 0
     mass = 1000;
@@ -113,9 +118,9 @@ axis on
 %% GIF OUTPUT PARAMETERS
 central_node_r = 0.015;
 lander_node_r = 0.008;
-R3Ddata.Bradius = r_b*ones(size(C_b,1),1);  
-R3Ddata.Sradius = r_ss*ones(size(C_s,1),1);
-R3Ddata.Nradius = [ones((nnodes-1),1)*lander_node_r ; central_node_r];
+%R3Ddata.Bradius = r_b*ones(size(C_b,1),1);  
+%R3Ddata.Sradius = r_ss*ones(size(C_s,1),1);
+%R3Ddata.Nradius = [ones((nnodes-1),1)*lander_node_r ; central_node_r];
 %% Initializing Matrices or arrays
 % ---------------------- Final distance arrays ----------------------------
 Max_g_of_different_orientation = zeros(length(theta_0y), length(theta_0x)); % Store Maximum acceleration
@@ -199,9 +204,10 @@ for thetay_i = 1:length(theta_0y)
         sigma_si_diff = zeros(number_of_loop,1);
         sigma_b_c_diff = zeros(number_of_loop,1);
         sigma_b_t_diff = zeros(number_of_loop,1);
-        %% Bottom Node Position
-        n_bottom_track = zeros(number_of_loop,1);
-        
+        %% Apply error of structure flips
+        [N_row, N_col] = size(N);
+        n_bottom_min_track = zeros(number_of_loop,1);
+        n_bottom_max_track = zeros(number_of_loop,1);
         %% Initializing maximum and minimum value of x,y,z position
         % They are the maximum of minimum valve for every loops
         % They are used to confine the range of axis if we plot diagrams.
@@ -210,11 +216,17 @@ for thetay_i = 1:length(theta_0y)
         Zmax = []; Zmin = [];
         %% Initialize the number of output images
         ii = 1;
+
         %% ====== Start simulation for each orientation =========
+        
         for loop = 1:number_of_loop
             %% keep track of bottom Node 
-            n_bottom_track(loop) = N(2,1);
+            n_bottom_min_track(loop) = N(2,1);
+            n_bottom_max_track(loop) = N(2,N_col);
             
+            if N(2,1) > N(2,N_col)
+                node_flip = 1;
+            end
             %{
             if loop == number_of_loop/10
                 tenseg_plot(N,C_s,C_b)
@@ -244,7 +256,7 @@ for thetay_i = 1:length(theta_0y)
             
             
             %% Plotting an arbitrary number of lander configurations throughout the time frame
-            
+            %{
             figure(3);
             if ismember(loop,X) == 1
                 tenseg_plot(N,C_b,C_s);
@@ -254,12 +266,12 @@ for thetay_i = 1:length(theta_0y)
                 %text(N(1,1),N(2,1),ttext,'fontsize',15);
                 hold on
             end
-            
+            %}
             
             %% External force
             f_e = externalforce(D,nnodes,n,pc,dn,eta,f_g,Cc);
             %% Internal force
-            [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss);
+            [f_I,varepsilon_s,varepsilon_b,sigma_b,s_initiallength,b_initiallength, sigma_ss_dt, sigma_si_dt, sigma_ss_diff_dt, sigma_si_diff_dt, sigma_b_c_diff_dt, sigma_b_t_diff_dt] = internalforce(D,I_D,C_sT,C_bT,s_0,b_0,s,b,n_s,n_b,ds,db,E_s,E_b, c_s,c_b,A_s,A_b,Yield_Nylon, Youngs_Titanium, Yield_Titanium, n_ss, FoS);
             %% Keep track of stresses
             sigma_ss_max(loop) = max(sigma_ss_dt);
             sigma_ss_min(loop) = min(sigma_ss_dt);
@@ -269,7 +281,7 @@ for thetay_i = 1:length(theta_0y)
             
             sigma_bar_max(loop) = max(sigma_b);
             sigma_bar_min(loop) = min(sigma_b);
-            
+             
             sigma_ss_diff(loop) = max(abs(sigma_ss_diff_dt));
             sigma_si_diff(loop) = max(abs(sigma_si_diff_dt));
             sigma_b_c_diff(loop) = max(abs(sigma_b_c_diff_dt));
@@ -455,11 +467,12 @@ mass = sum(m,'all');
 %mass = mass_internal+mass_nodes;
 Max_g_of_different_orientation = max(max(Max_g_of_different_orientation));
 
-
+%{
 figure()
 plot(currenttime,center_node_g/9.8)
 xlabel('time [s]')
 ylabel('Acceleration of the center node [g_earth]')
+%}
 
 %re = reshape(Max_g_of_different_orientation,[20,42]);
 sigma_ss_diff_n = max(max(abs(sigma_ss_diff_n)));
@@ -473,5 +486,4 @@ toc
 % sound(sin(2*pi*25*(1:4000)/100));
 % pause(1);
 % sound(sin(2*pi*25*(1:4000)/100));
-
 end
